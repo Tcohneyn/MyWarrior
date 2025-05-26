@@ -67,7 +67,7 @@ private:
 #pragma region Inputs
     // 区域标记，用于分组相关代码，便于阅读和维护
 
-    UPROPERTY(EditDefaultsOnly, Category = "CharacterData", meta = (ALLowPrivateAccess = "true"))
+    UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = "CharacterData", meta = (ALLowPrivateAccess = "true"))
     // Unreal Engine的宏，定义一个属性，EditDefaultsOnly表示只能在默认编辑器中编辑，Category用于分类，meta用于元数据
     TObjectPtr<UDataAsset_InputConfig> InputConfigDataAsset;
     // 定义一个指向输入配置数据资产的指针，用于存储输入映射配置

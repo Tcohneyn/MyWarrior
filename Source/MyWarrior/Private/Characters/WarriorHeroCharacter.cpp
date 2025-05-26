@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "DataAssets/Input/DataAsset_InputConfig.h"
+#include "DataAssets/StartUpData/DataAsset_StartUpDataBase.h"
 #include "WarriorGameplayTags.h"
 #include "AbilitySystem/WarriorAbilitySystemComponent.h"
 #include "Components/Input/WarriorEnhancedInputComponent.h"
@@ -57,21 +58,14 @@ void AWarriorHeroCharacter::PossessedBy(AController* NewController)
 {
     // 调用基类的PossessedBy函数，确保基类的初始化逻辑也被执行
     Super::PossessedBy(NewController);
-    
-    // 检查WarriorAbilitySystemComponent和WarriorAttributeSet是否有效
-    if (WarriorAbilitySystemComponent && WarriorAttributeSet)
+    if (!CharacterStartUpData.IsNull())
     {
-        // 构造一个字符串，包含Owner Actor和AvatarActor的标签
-        const FString ASCText =
-            FString::Printf(TEXT("Owner Actor: %s ,AvatarActor: %s "), *WarriorAbilitySystemComponent->GetOwnerActor()->GetActorLabel(),
-                *WarriorAbilitySystemComponent->GetAvatarActor()->GetActorLabel());
-        
-        // 打印调试信息，表示AbilitySystemComponent有效，并显示Owner Actor和AvatarActor的标签
-        Debug::Print(TEXT("Ability system component valid.") + ASCText, FColor::Green);
-        
-        // 打印调试信息，表示AttributeSet有效
-        Debug::Print(TEXT("AttributeSet valid."), FColor::Green);
+        if (UDataAsset_StartUpDataBase* LoadedData = CharacterStartUpData.LoadSynchronous())
+        {
+            LoadedData->GiveToAbilitySystemComponent(WarriorAbilitySystemComponent);
+        }
     }
+
 }
 
 // AWarriorHeroCharacter类的BeginPlay函数，用于在游戏开始时执行一些初始化操作

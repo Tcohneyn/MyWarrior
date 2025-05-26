@@ -23,7 +23,8 @@ public class MyWarrior : ModuleRules
 
 		PublicIncludePaths.AddRange(new string[]
 	   {
-		   "MyWarrior/Public/Characters"
+		   "MyWarrior/Public/Characters",
+		   "MyWarrior/Public/Items/Weapons"
 	   });
 
            // Uncomment if you are using Slate UI
