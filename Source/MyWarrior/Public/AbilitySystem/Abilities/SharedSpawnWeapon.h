@@ -12,16 +12,21 @@ class AWarriorWeaponBase;
 UCLASS()
 class MYWARRIOR_API USharedSpawnWeapon : public UWarriorGameplayAbility
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 public:
-    UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)  
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
     TSubclassOf<AWarriorWeaponBase> WeaponClassToSpawn;
 
-    UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
     FName SocketNameToAttachTo;
 
-protected:
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+    FGameplayTag WeaponTagToRegister;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+    bool RegisterasEquippedWeapon;
+
+protected:
     virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
         const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 };

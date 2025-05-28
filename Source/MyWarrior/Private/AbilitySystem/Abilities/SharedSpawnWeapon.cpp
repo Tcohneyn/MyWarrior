@@ -1,6 +1,7 @@
 // Tcohneyn All Rights Reserved
 
 #include "AbilitySystem/Abilities/SharedSpawnWeapon.h"
+#include "Components/Combat/PawnCombatComponent.h"
 
 void USharedSpawnWeapon::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
     const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -21,6 +22,9 @@ void USharedSpawnWeapon::ActivateAbility(const FGameplayAbilitySpecHandle Handle
             true                           // 自动更新子组件位置
         );
         NewActor->AttachToComponent(GetOwningComponentFromActorInfo(), NewRules, SocketNameToAttachTo);
+
+        GetPawnCombatComponentFromActorInfo()->RegisterSpawnedWeapon(
+            WeaponTagToRegister, Cast<AWarriorWeaponBase>(NewActor), RegisterasEquippedWeapon);
 
         EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
     }

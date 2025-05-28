@@ -19,6 +19,7 @@ class UDataAsset_InputConfig;
 // 声明输入配置数据资产类，用于存储输入映射配置
 struct FInputActionValue;
 // 声明输入动作值结构体，用于存储输入动作的值
+class UHeroCombatComponent;
 
 UCLASS()
 // Unreal Engine的宏，定义一个UClass，表示这是一个可以被实例化的类
@@ -54,20 +55,24 @@ private:
     // 区域标记，用于分组相关代码，便于阅读和维护
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (ALLowPrivateAccess = "true"))
-    // Unreal Engine的宏，定义一个属性，VisibleAnywhere表示在编辑器中可见，BRidge表示可以在蓝图编辑器中访问，Category用于分类，meta用于元数据
+    // Unreal
+    // Engine的宏，定义一个属性，VisibleAnywhere表示在编辑器中可见，BRidge表示可以在蓝图编辑器中访问，Category用于分类，meta用于元数据
     TObjectPtr<USpringArmComponent> CameraBoom;
     // 定义一个指向弹簧臂组件的指针，用于相机跟随
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (ALLowPrivateAccess = "true"))
     TObjectPtr<UCameraComponent> FollowCamera;
     // 定义一个指向相机组件的指针，用于角色视角
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
+    TObjectPtr<UHeroCombatComponent> HeroCombatComponent;
 #pragma endregion
     // 区域标记结束
 
 #pragma region Inputs
     // 区域标记，用于分组相关代码，便于阅读和维护
 
-    UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = "CharacterData", meta = (ALLowPrivateAccess = "true"))
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "CharacterData", meta = (ALLowPrivateAccess = "true"))
     // Unreal Engine的宏，定义一个属性，EditDefaultsOnly表示只能在默认编辑器中编辑，Category用于分类，meta用于元数据
     TObjectPtr<UDataAsset_InputConfig> InputConfigDataAsset;
     // 定义一个指向输入配置数据资产的指针，用于存储输入映射配置
@@ -80,4 +85,6 @@ private:
 #pragma endregion
     // 区域标记结束
 
+public:
+    FORCEINLINE UHeroCombatComponent* GetHeroCombatComponent() const { return HeroCombatComponent; }
 };
