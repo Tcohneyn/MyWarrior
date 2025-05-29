@@ -27,14 +27,15 @@ struct FWarriorInputActionConfig
 
 public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (Categories = "InputTag"))
-    // 定义一个属性，只能在默认设置中编辑，蓝图只读，并且可以归类为"InputTag"
     FGameplayTag InputTag;
-    // 游戏玩法标签，用于标识输入动作
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    // 定义一个属性，只能在默认设置中编辑，蓝图只读
     TObjectPtr<UInputAction> InputAction;
-    // 输入动作的指针，指向UInputAction对象
+
+    bool IsValid() const
+    {
+        return InputTag.IsValid() && InputAction;
+    }
 };
 
 UCLASS()
@@ -51,10 +52,13 @@ public:
     // 默认的输入映射上下文，指向UInputMappingContext对象
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (TitleProperty = "InputTag"))
-    // 定义一个属性，只能在默认设置中编辑，蓝图只读，并且将InputTag属性作为显示标题
     TArray<FWarriorInputActionConfig> NativeInputActions;
-    // 原生输入动作配置数组，包含多个FWarriorInputActionConfig结构体
+
 
     UInputAction* FindNativeInputActionByTag(const FGameplayTag& InputTag) const;
     // 声明一个函数，用于通过游戏玩法标签查找原生的输入动作，返回UInputAction指针
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (TitleProperty = "InputTag"))
+    TArray<FWarriorInputActionConfig> AbilityInputActions;
+
+
 };
