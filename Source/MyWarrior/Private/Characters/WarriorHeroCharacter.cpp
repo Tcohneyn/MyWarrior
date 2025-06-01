@@ -108,6 +108,9 @@ void AWarriorHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
     // 绑定视角旋转输入动作
     WarriorInputComponent->BindNativeInputAction(
         InputConfigDataAsset, WarriorGameplayTags::InputTag_Look, ETriggerEvent::Triggered, this, &AWarriorHeroCharacter::Input_Look);
+
+    // 绑定能力输入动作
+    WarriorInputComponent->BindAbilityInputAction(InputConfigDataAsset,this,&ThisClass::Input_AbilityInputPressesd,&ThisClass::Input_AbilityInputReleased);
 }
 
 // AWarriorHeroCharacter类的Input_Move函数，用于处理移动输入
@@ -152,4 +155,14 @@ void AWarriorHeroCharacter::Input_Look(const FInputActionValue& InputActionValue
     {
         AddControllerPitchInput(LookAxisVector.Y);
     }
+}
+
+void AWarriorHeroCharacter::Input_AbilityInputPressesd(FGameplayTag InputTag) 
+{
+    WarriorAbilitySystemComponent->OnAbilityInputPressed(InputTag);
+}
+
+void AWarriorHeroCharacter::Input_AbilityInputReleased(FGameplayTag InputTag) 
+{
+    WarriorAbilitySystemComponent->OnAbilityInputReleased(InputTag);
 }

@@ -12,21 +12,26 @@ void USharedSpawnWeapon::ActivateAbility(const FGameplayAbilitySpecHandle Handle
     SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
     FTransform SpawnTransform = FTransform(FRotator::ZeroRotator, FVector(0, 0, 0));
-    AActor* NewActor = GetWorld()->SpawnActor<AActor>(WeaponClassToSpawn, SpawnTransform, SpawnParams);
 
-    if (IsValid(NewActor))
+    if (AActor* NewActor = GetWorld()->SpawnActor<AActor>(WeaponClassToSpawn, SpawnTransform, SpawnParams))
     {
         FAttachmentTransformRules NewRules(EAttachmentRule::SnapToTarget,  // Location
-            EAttachmentRule::KeepRelative, // Rotation
-            EAttachmentRule::KeepWorld,    // Scale
-            true                           // 自动更新子组件位置
+            EAttachmentRule::KeepRelative,                                 // Rotation
+            EAttachmentRule::KeepWorld,                                    // Scale
+            true                                                           // 自动更新子组件位置
         );
         NewActor->AttachToComponent(GetOwningComponentFromActorInfo(), NewRules, SocketNameToAttachTo);
+        if (UPawnCombatComponent* CombatComp = GetPawnCombatComponentFromActorInfo())
+        {
+            CombatComp->RegisterSpawnedWeapon(WeaponTagToRegister, Cast<AWarriorWeaponBase>(NewActor), RegisterasEquippedWeapon);
 
-        GetPawnCombatComponentFromActorInfo()->RegisterSpawnedWeapon(
-            WeaponTagToRegister, Cast<AWarriorWeaponBase>(NewActor), RegisterasEquippedWeapon);
-
-        EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
+            EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
+        }
+        else
+        {
+            NewActor->Destroy();
+            EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+        }
     }
     else
     {

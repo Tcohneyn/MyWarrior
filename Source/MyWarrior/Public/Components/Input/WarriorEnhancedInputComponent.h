@@ -2,16 +2,11 @@
 // 版权声明
 
 #pragma once
-// 确保头文件只被包含一次，防止重复定义
 
 #include "CoreMinimal.h"
-// 包含UE4核心最小头文件，提供基础类型和宏定义
 #include "EnhancedInputComponent.h"
-// 包含增强输入组件头文件，用于处理增强的输入逻辑
 #include "DataAssets/Input/DataAsset_InputConfig.h"
-// 包含输入配置数据资产头文件，用于存储和管理输入配置
 #include "WarriorEnhancedInputComponent.generated.h"
-// 包含生成的头文件，用于UE4反射系统
 
 /**
  * UWarriorEnhancedInputComponent类定义
