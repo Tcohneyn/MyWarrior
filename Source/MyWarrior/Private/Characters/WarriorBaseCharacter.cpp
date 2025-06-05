@@ -39,6 +39,6 @@ void AWarriorBaseCharacter::PossessedBy(AController* NewController)
     {
         // 初始化能力系统组件的信息，将当前角色和控制器传递进去
         WarriorAbilitySystemComponent->InitAbilityActorInfo(this, this);
-        ensureMsgf(!CharacterStartUpData.IsNull(),TEXT("Forget to assign start up data to %s"), *GetName());
+        ensureMsgf(!CharacterStartUpData.IsNull(), TEXT("Forget to assign start up data to %s"), *GetName());
     }
 }

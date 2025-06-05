@@ -1,5 +1,6 @@
 // Tcohneyn All Rights Reserved
 
+#include "AbilitySystem/Abilities/HeroUnequipAxeAbility.h"
 #include "AbilitySystem/Abilities/HeroEquipAxeAbility.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
@@ -12,12 +13,15 @@
 #include "EnhancedInputSubsystems.h"
 #include "Controllers/WarriorHeroController.h"
 #include "AbilitySystem/WarriorAbilitySystemComponent.h"
-void UHeroEquipAxeAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+void UHeroUnequipAxeAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
     const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
     PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, FName("PlayMontageTask"), MontageToPlay);
 
     WaitEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, EventTag);
+    UHeroCombatComponent* CombatComponent = GetHeroCombatComponentFromActorInfo();
+    if (!CombatComponent) return;
+    CombatComponent->CurrentEquippedWeaponTag = FGameplayTag::EmptyTag;
 
     PlayMontageTask->OnCompleted.AddDynamic(this, &ThisClass::OnMontage);
     PlayMontageTask->OnBlendOut.AddDynamic(this, &ThisClass::OnMontage);
@@ -31,7 +35,7 @@ void UHeroEquipAxeAbility::ActivateAbility(const FGameplayAbilitySpecHandle Hand
     WaitEventTask->ReadyForActivation();
 }
 
-void UHeroEquipAxeAbility::OnMontage()
+void UHeroUnequipAxeAbility::OnMontage()
 {
     // 安全结束任务
     if (PlayMontageTask) PlayMontageTask->EndTask();
@@ -39,9 +43,9 @@ void UHeroEquipAxeAbility::OnMontage()
     EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }
 
-void UHeroEquipAxeAbility::OnGameplayEventReceived(FGameplayEventData Payload)
+void UHeroUnequipAxeAbility::OnGameplayEventReceived(FGameplayEventData Payload)
 {
-    Debug::Print("OnGameplayEventReceived");
+    Debug::Print("UnGameplayEventReceived");
     UHeroCombatComponent* CombatComponent = GetHeroCombatComponentFromActorInfo();
     if (!CombatComponent) return;
     AWarriorWeaponBase* CurrentWeapon = CombatComponent->GetCharacterCarriedWeaponByTag(WeaponTag);
@@ -51,12 +55,11 @@ void UHeroEquipAxeAbility::OnGameplayEventReceived(FGameplayEventData Payload)
         true                                                           // 自动更新子组件位置
     );
     CurrentWeapon->AttachToComponent(GetOwningComponentFromActorInfo(), NewRules, SocketName);
-     CurrentHeroWeapon = CombatComponent->GetHeroCarriedWeaponByTag(WeaponTag);
-    HandleEquipWeapon(CurrentHeroWeapon);
-    CombatComponent->CurrentEquippedWeaponTag = WeaponTag;
+    CurrentHeroWeapon = CombatComponent->GetHeroCarriedWeaponByTag(WeaponTag);
+    HandleUnequipWeapon(CurrentHeroWeapon);
 }
 
-void UHeroEquipAxeAbility::HandleEquipWeapon(AWarriorHeroWeapon* NewWeapon)
+void UHeroUnequipAxeAbility::HandleUnequipWeapon(AWarriorHeroWeapon* NewWeapon)
 {
     check(NewWeapon);
     if (!NewWeapon) return;
@@ -64,28 +67,38 @@ void UHeroEquipAxeAbility::HandleEquipWeapon(AWarriorHeroWeapon* NewWeapon)
     RunSequenceTasks();
 }
 
-void UHeroEquipAxeAbility::RunSequenceTasks()
+void UHeroUnequipAxeAbility::RunSequenceTasks()
 {
     // 定义三个并行任务（模拟Sequence的三个输出引脚）
     auto Task1 = [this]
     {
         TSubclassOf<UWarriorHeroLinkedAnimLayer> AnimLayer = CacheHeroWeaponData.WeaponAnimLayerToLink;
-        GetOwningComponentFromActorInfo()->LinkAnimClassLayers(AnimLayer);
+        if (GetOwningComponentFromActorInfo())
+        {
+            GetOwningComponentFromActorInfo()->UnlinkAnimClassLayers(AnimLayer);
+        }
     };
     auto Task2 = [this]
-    { 
+    {
         ULocalPlayer* LocalPlayer = GetHeroControllerFromActorInfo()->GetLocalPlayer();
         auto Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
-        Subsystem->AddMappingContext(CacheHeroWeaponData.WeaponInputMappingContext, 1);
+        if (Subsystem)
+        {
+            Subsystem->RemoveMappingContext(CacheHeroWeaponData.WeaponInputMappingContext);
+        }
         
-        };
-    auto Task3 = [this] { 
+    };
+    auto Task3 = [this]
+    {
         UWarriorAbilitySystemComponent* ASC = GetWarriorAbilitySystemComponentFromActorInfo();
         check(ASC);
         if (!ASC) return;
-        ASC->GrantHeroWeaponAbilities(CacheHeroWeaponData.DefaultWeaponAbilities, GetAbilityLevel(), NewWeaponHandles);
-        CurrentHeroWeapon->AssignGrantedAbilitySpecHandles(NewWeaponHandles);
-        };
+        TArray<FGameplayAbilitySpecHandle> NewWeaponHandles = CurrentHeroWeapon->GetGrantedAbilitySpecHandles();
+        if (ASC)
+        {
+            ASC->RemovedGrantedHeroWeaponAbilities(NewWeaponHandles);
+        }
+    };
 
     // 使用ParallelFor并行执行
     ParallelFor(3,

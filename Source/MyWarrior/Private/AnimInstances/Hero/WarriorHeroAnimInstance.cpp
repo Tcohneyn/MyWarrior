@@ -4,6 +4,7 @@
 #include "AnimInstances/Hero/WarriorHeroAnimInstance.h"
 // 包含英雄角色的头文件
 #include "Characters/WarriorHeroCharacter.h"
+//  #include "Components/Combat/HeroCombatComponent.h"
 
 // 初始化动画实例的函数
 void UWarriorHeroAnimInstance::NativeInitializeAnimation()
@@ -14,7 +15,10 @@ void UWarriorHeroAnimInstance::NativeInitializeAnimation()
     if (OwningCharacter)
     {
         // 将拥有该动画实例的角色转换为AWarriorHeroCharacter类型
-        OwningCharacter = Cast<AWarriorHeroCharacter>(OwningCharacter);
+        OwningHeroCharacter = Cast<AWarriorHeroCharacter>(OwningCharacter); //这里把OwningHeroCharacter写成OwningCharacter折磨了半天
+
+        //CurrentEquippedWeaponTag =
+        //    Cast<AWarriorHeroCharacter>(OwningCharacter)->GetHeroCombatComponent()->GetCharacterCurrentEquippedWeaponTag();
     }
 }
 

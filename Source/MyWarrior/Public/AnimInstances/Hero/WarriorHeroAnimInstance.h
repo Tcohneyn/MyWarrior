@@ -8,6 +8,7 @@
 // 包含Unreal Engine的核心最小头文件，提供基础功能
 #include "AnimInstances/WarriorCharacterAnimInstance.h"
 // 包含自定义的战士角色动画实例头文件
+#include "GameplayTagContainer.h"
 #include "WarriorHeroAnimInstance.generated.h"
 // 包含生成的头文件，用于序列化和反射
 
@@ -53,4 +54,7 @@ protected:
 
     float IdleElpasedTime;
     // 浮点变量，用于记录空闲状态经过的时间
+
+    //UPROPERTY(BlueprintReadWrite, Category = "Warrior|Combat")
+    //FGameplayTag CurrentEquippedWeaponTag;
 };

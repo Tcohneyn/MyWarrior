@@ -19,6 +19,7 @@ class UWarriorAttributeSet;
 // 声明UWarriorAttributeSet类，用于前向声明
 class UDataAsset_StartUpDataBase;
 
+
 UCLASS()
 // UCLASS宏定义，表示这是一个UObject类
 class MYWARRIOR_API AWarriorBaseCharacter : public ACharacter, public IAbilitySystemInterface

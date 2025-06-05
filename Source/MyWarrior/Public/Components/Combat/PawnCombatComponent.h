@@ -27,7 +27,7 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Warrior|Combat")
     AWarriorWeaponBase* GetCharacterCurrentEquippedWeapon() const;
 
-
+    //FGameplayTag GetCharacterCurrentEquippedWeaponTag() const;
 private:
     TMap<FGameplayTag, AWarriorWeaponBase*> CharacterCarriedWeaponMap;
 };

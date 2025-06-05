@@ -6,7 +6,7 @@
 #include "AbilitySystem/Abilities/WarriorHeroGameplayAbility.h"
 #include "Kismet/BlueprintAsyncActionBase.h"
 #include "WarriorTypes/WarriorStructTypes.h"
-#include "HeroEquipAxeAbility.generated.h"
+#include "HeroUnequipAxeAbility.generated.h"
 
 class UAnimMontage;
 class UAbilityTask_PlayMontageAndWait;
@@ -14,24 +14,20 @@ class UAbilityTask_WaitGameplayEvent;
 class AWarriorHeroWeapon;
 
 UCLASS()
-class MYWARRIOR_API UHeroEquipAxeAbility : public UWarriorHeroGameplayAbility
+class MYWARRIOR_API UHeroUnequipAxeAbility : public UWarriorHeroGameplayAbility
 {
-    GENERATED_BODY()
-public:
-    UPROPERTY()
-    TArray<FGameplayAbilitySpecHandle> NewWeaponHandles;
-
+	GENERATED_BODY()
 protected:
-    UPROPERTY(EditDefaultsOnly, Category = "Equip")
+    UPROPERTY(EditDefaultsOnly, Category = "Unequip")
     TObjectPtr<UAnimMontage> MontageToPlay;
 
-    UPROPERTY(EditDefaultsOnly, Category = "Equip")
+    UPROPERTY(EditDefaultsOnly, Category = "Unequip")
     FGameplayTag EventTag;
 
-    UPROPERTY(EditDefaultsOnly, Category = "Equip")
+    UPROPERTY(EditDefaultsOnly, Category = "Unequip")
     FGameplayTag WeaponTag;
 
-    UPROPERTY(EditDefaultsOnly, Category = "Equip")
+    UPROPERTY(EditDefaultsOnly, Category = "Unequip")
     FName SocketName;
 
     virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
@@ -52,11 +48,10 @@ protected:
     UPROPERTY()
     TObjectPtr<AWarriorHeroWeapon> InWeaponToEquip;
 
-
     UPROPERTY()
     FWarriorHeroWeaponData CacheHeroWeaponData;
 
-    void HandleEquipWeapon(AWarriorHeroWeapon* InWeaponToEquip);
+    void HandleUnequipWeapon(AWarriorHeroWeapon* InWeaponToEquip);
 
     UFUNCTION(BlueprintCallable, Category = "Sequence")
     void RunSequenceTasks();

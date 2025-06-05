@@ -56,7 +56,7 @@ private:
     TObjectPtr<UCameraComponent> FollowCamera;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
-    TObjectPtr<UHeroCombatComponent> HeroCombatComponent;
+    UHeroCombatComponent* HeroCombatComponent;
 #pragma endregion
     // 区域标记结束
 

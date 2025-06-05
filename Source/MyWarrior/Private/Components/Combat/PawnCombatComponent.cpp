@@ -1,6 +1,5 @@
 // Tcohneyn All Rights Reserved
 
-
 #include "Components/Combat/PawnCombatComponent.h"
 #include "Items/Weapons/WarriorWeaponBase.h"
 #include "WarriorDebugHelper.h"
@@ -14,13 +13,13 @@ void UPawnCombatComponent::RegisterSpawnedWeapon(
 
     CharacterCarriedWeaponMap.Emplace(InWeaponTagToRegister, InWeaponToRegister);
 
-
     if (bRegisterAsEquippedWeapon)
     {
         CurrentEquippedWeaponTag = InWeaponTagToRegister;
+        Debug::Print(CurrentEquippedWeaponTag.ToString());
     }
-    const FString WeaponString = FString::Printf(TEXT("A Weapon named: %s has been registered using the tag %s"),
-        *InWeaponToRegister->GetName(), *InWeaponTagToRegister.ToString());
+    const FString WeaponString = FString::Printf(
+        TEXT("A Weapon named: %s has been registered using the tag %s"), *InWeaponToRegister->GetName(), *InWeaponTagToRegister.ToString());
     Debug::Print(WeaponString);
 }
 
@@ -46,3 +45,14 @@ AWarriorWeaponBase* UPawnCombatComponent::GetCharacterCurrentEquippedWeapon() co
 
     return GetCharacterCarriedWeaponByTag(CurrentEquippedWeaponTag);
 }
+
+//FGameplayTag UPawnCombatComponent::GetCharacterCurrentEquippedWeaponTag() const
+//{
+//    if (!CurrentEquippedWeaponTag.IsValid())
+//    {
+//        Debug::Print(TEXT("No weapon equipped"));
+//        return FGameplayTag::EmptyTag;
+//    }
+//    Debug::Print(CurrentEquippedWeaponTag.ToString());
+//    return CurrentEquippedWeaponTag;
+//}
