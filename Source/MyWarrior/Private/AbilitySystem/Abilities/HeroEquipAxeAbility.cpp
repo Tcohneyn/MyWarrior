@@ -41,7 +41,7 @@ void UHeroEquipAxeAbility::OnMontage()
 
 void UHeroEquipAxeAbility::OnGameplayEventReceived(FGameplayEventData Payload)
 {
-    Debug::Print("OnGameplayEventReceived");
+    //Debug::Print("OnGameplayEventReceived");
     UHeroCombatComponent* CombatComponent = GetHeroCombatComponentFromActorInfo();
     if (!CombatComponent) return;
     AWarriorWeaponBase* CurrentWeapon = CombatComponent->GetCharacterCarriedWeaponByTag(WeaponTag);
