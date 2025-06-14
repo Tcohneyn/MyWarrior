@@ -3,6 +3,7 @@
 #include "AbilitySystem/Abilities/SharedSpawnWeapon.h"
 #include "Components/Combat/PawnCombatComponent.h"
 
+
 void USharedSpawnWeapon::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
     const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
