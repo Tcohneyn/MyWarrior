@@ -23,6 +23,11 @@ AWarriorEnemyCharacter::AWarriorEnemyCharacter()
     EnemyCombatComponent = CreateDefaultSubobject<UEnemyCombatComponent>(TEXT("CombatComponent"));
 }
 
+UPawnCombatComponent* AWarriorEnemyCharacter::GetPawnCombatComponent() const
+{
+    return EnemyCombatComponent;
+}
+
 void AWarriorEnemyCharacter::PossessedBy(AController* NewController)
 {
     Super::PossessedBy(NewController);
@@ -41,7 +46,7 @@ void AWarriorEnemyCharacter::InitEnemyStartUpData()
         if (UDataAsset_StartUpDataBase* LoadedData = CharacterStartUpData.Get())
         {
             LoadedData->GiveToAbilitySystemComponent(WarriorAbilitySystemComponent);
-            Debug::Print(TEXT("Enemy StartUpData Loaded"), FColor::Green);
+            //Debug::Print(TEXT("Enemy StartUpData Loaded"), FColor::Green);
         }
         }
     )

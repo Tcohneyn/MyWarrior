@@ -56,6 +56,11 @@ AWarriorHeroCharacter::AWarriorHeroCharacter()
     HeroCombatComponent = CreateDefaultSubobject<UHeroCombatComponent>(TEXT("HeroCombatComponent"));
 }
 
+UPawnCombatComponent* AWarriorHeroCharacter::GetPawnCombatComponent() const
+{
+    return HeroCombatComponent;
+}
+
 // AWarriorHeroCharacter类的PossessedBy函数，用于在角色被控制器拥有时执行一些初始化操作
 void AWarriorHeroCharacter::PossessedBy(AController* NewController)
 {

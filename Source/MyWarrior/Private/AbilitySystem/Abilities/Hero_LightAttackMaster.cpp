@@ -8,10 +8,13 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "WarriorFunctionLibrary.h"
 #include "Async/ParallelFor.h"
+#include "WarriorDebugHelper.h"
 void UHero_LightAttackMaster::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
     const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
     GetWorld()->GetTimerManager().ClearTimer(ComboCountResetTimerHandle);
+
+    UsedComboCount = CurrentLightAttackComboCount;
 
     UAnimMontage* MontageToPlay = AttackMontagesMap.FindRef(CurrentLightAttackComboCount);
     PlayMontageTask =
@@ -49,6 +52,15 @@ void UHero_LightAttackMaster::ResetAttackComboCount()
 void UHero_LightAttackMaster::RunSequenceTasks() 
 {
     auto Task1 = [this] { 
+
+          WaitEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, EventTag);
+
+          WaitEventTask->EventReceived.AddDynamic(this, &ThisClass::OnGameplayEventReceived);
+
+          WaitEventTask->ReadyForActivation();
+        };
+
+    auto Task2 = [this] { 
         if (CurrentLightAttackComboCount == AttackMontagesMap.Num())
         {
             ResetAttackComboCountDelegate.ExecuteIfBound();
@@ -68,12 +80,20 @@ void UHero_LightAttackMaster::RunSequenceTasks()
         }
     };
     // 使用ParallelFor并行执行
-    ParallelFor(1,
+    ParallelFor(2,
         [&](int32 Index)
         {
             switch (Index)
             {
                 case 0: Task1(); break;
+                case 1: Task2(); break;
             }
         });
+}
+
+void UHero_LightAttackMaster::OnGameplayEventReceived(FGameplayEventData Payload) 
+{
+    Debug::Print(
+        TEXT("Hitting") + Payload.Target->GetName() + TEXT("with light attack Current Combo Count") + FString::FromInt(UsedComboCount),
+        FColor::Green);
 }

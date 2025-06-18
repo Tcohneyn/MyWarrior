@@ -8,6 +8,7 @@
 
 class UAnimMontage;
 class UAbilityTask_PlayMontageAndWait;
+class UAbilityTask_WaitGameplayEvent;
 
 UCLASS()
 class MYWARRIOR_API UHero_LightAttackMaster : public UWarriorHeroGameplayAbility
@@ -19,18 +20,30 @@ public:
 
     UPROPERTY(EditDefaultsOnly, Category = "GameplayTags")
     FGameplayTag JumpTag;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Equip")
+    FGameplayTag EventTag;
+
 protected:
+    UPROPERTY()
+    UAbilityTask_WaitGameplayEvent* WaitEventTask;
+
     UFUNCTION()
     void OnMontage();
 
     UFUNCTION()
     void RunSequenceTasks();
 
+    UFUNCTION()
+    void OnGameplayEventReceived(FGameplayEventData Payload);
+
     virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
         const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
     UPROPERTY(EditDefaultsOnly, Category = "Light Attack")
     int CurrentLightAttackComboCount = 1;
+
+    int UsedComboCount;
 
     UPROPERTY(EditDefaultsOnly, Category = "Light Attack")
     TMap<int, UAnimMontage*> AttackMontagesMap;

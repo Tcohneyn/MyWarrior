@@ -29,6 +29,11 @@ UAbilitySystemComponent* AWarriorBaseCharacter::GetAbilitySystemComponent() cons
     return GetWarriorAbilitySystemComponent();
 }
 
+UPawnCombatComponent* AWarriorBaseCharacter::GetPawnCombatComponent() const
+{
+    return nullptr;
+}
+
 // 当角色被控制时调用
 void AWarriorBaseCharacter::PossessedBy(AController* NewController)
 {

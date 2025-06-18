@@ -5,11 +5,9 @@
 // 确保头文件只被包含一次，防止重复定义
 
 #include "CoreMinimal.h"
-// 包含Unreal Engine的核心最小头文件，提供基础类型和宏定义
 #include "GameFramework/Character.h"
-// 包含Character类，用于定义游戏中的角色
 #include "AbilitySystemInterface.h"
-// 包含能力系统接口头文件，用于实现角色能力系统
+#include "Interfaces/PawnCombatInterface.h"
 #include "WarriorBaseCharacter.generated.h"
 // 包含生成的头文件，用于序列化和反射
 
@@ -21,8 +19,7 @@ class UDataAsset_StartUpDataBase;
 
 
 UCLASS()
-// UCLASS宏定义，表示这是一个UObject类
-class MYWARRIOR_API AWarriorBaseCharacter : public ACharacter, public IAbilitySystemInterface
+class MYWARRIOR_API AWarriorBaseCharacter : public ACharacter, public IAbilitySystemInterface,public IPawnCombatInterface
 // 定义AWarriorBaseCharacter类，继承自ACharacter和IAbilitySystemInterface
 {
     GENERATED_BODY()
@@ -35,13 +32,14 @@ public:
     AWarriorBaseCharacter();
 
     //~ Begin IAbilitySystemInterface Interface
-    // 开始IAbilitySystemInterface接口的实现部分
 
     // 获取能力系统组件的虚函数重写
     virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-
     //~ End IAbilitySystemInterface Interface
-    // 结束IAbilitySystemInterface接口的实现部分
+
+    //~ Begin IPawnCombatComponent Interface
+    virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
+    //~ End IPawnCombatComponent Interface
 
 protected:
     // 受保护成员变量和函数部分

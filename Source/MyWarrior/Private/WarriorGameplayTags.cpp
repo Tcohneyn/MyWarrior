@@ -30,5 +30,8 @@ UE_DEFINE_GAMEPLAY_TAG(Player_Status_JumpToFinisher, "Player.Status.JumpToFinish
 
 /** Enemy Tag **/
 UE_DEFINE_GAMEPLAY_TAG(Enemy_Weapon, "Enemy.Weapon");
+
+/** Shared Tag **/
+UE_DEFINE_GAMEPLAY_TAG(Shared_Event_MeleeHit, "Shared.Event.MeleeHit");
 }  // namespace WarriorGameplayTags
 // 结束命名空间 WarriorGameplayTags

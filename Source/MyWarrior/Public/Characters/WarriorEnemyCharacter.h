@@ -16,6 +16,10 @@ class MYWARRIOR_API AWarriorEnemyCharacter : public AWarriorBaseCharacter
 public:
     AWarriorEnemyCharacter();
 
+    //~ Begin IPawnCombatComponent Interface
+    virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
+    //~ End IPawnCombatComponent Interface
+
 protected:
     //~ Begin APawn Interface
     virtual void PossessedBy(AController* NewController) override;

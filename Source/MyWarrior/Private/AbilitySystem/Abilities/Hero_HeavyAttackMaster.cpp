@@ -8,10 +8,13 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "WarriorFunctionLibrary.h"
 #include "Async/ParallelFor.h"
+#include "WarriorDebugHelper.h"
 void UHero_HeavyAttackMaster::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
     const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
     GetWorld()->GetTimerManager().ClearTimer(ComboCountResetTimerHandle);
+
+    UsedComboCount = CurrentHeavyAttackComboCount;
 
     AActor* InActor = CastChecked<AActor>(GetHeroCharacterFromActorInfo());
     if (UWarriorFunctionLibrary::NativeDoesActorHaveTag(InActor, JumpTag))
@@ -54,6 +57,15 @@ void UHero_HeavyAttackMaster::RunSequenceTasks()
 {
     auto Task1 = [this]
     {
+        WaitEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, EventTag);
+
+        WaitEventTask->EventReceived.AddDynamic(this, &ThisClass::OnGameplayEventReceived);
+
+        WaitEventTask->ReadyForActivation();
+    };
+
+    auto Task2 = [this]
+    {
         if (CurrentHeavyAttackComboCount == AttackMontagesMap.Num())
         {
             ResetAttackComboCountDelegate.ExecuteIfBound();
@@ -64,12 +76,20 @@ void UHero_HeavyAttackMaster::RunSequenceTasks()
         }
     };
     // 使用ParallelFor并行执行
-    ParallelFor(1,
+    ParallelFor(2,
         [&](int32 Index)
         {
             switch (Index)
             {
                 case 0: Task1(); break;
+                case 1: Task2(); break;
             }
         });
+}
+
+void UHero_HeavyAttackMaster::OnGameplayEventReceived(FGameplayEventData Payload) 
+{
+    Debug::Print(
+        TEXT("Hitting") + Payload.Target->GetName() + TEXT("with heavy attack Current Combo Count") + FString::FromInt(UsedComboCount),
+        FColor::Green);
 }

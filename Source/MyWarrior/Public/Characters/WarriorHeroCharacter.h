@@ -22,13 +22,15 @@ class MYWARRIOR_API AWarriorHeroCharacter : public AWarriorBaseCharacter
 // 定义AWarriorHeroCharacter类，继承自AWarriorBaseCharacter，MYWARRIOR_API是模块的导出宏
 {
     GENERATED_BODY()
-    // Unreal Engine的宏，用于生成类的序列化和反射代码
+
 
 public:
-    // 公共成员函数和变量
-    AWarriorHeroCharacter();
-    // 构造函数，用于初始化对象
 
+    AWarriorHeroCharacter();
+
+     //~ Begin IPawnCombatComponent Interface
+    virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
+    //~ End IPawnCombatComponent Interface
 protected:
     // 受保护成员函数和变量，只能在类内部和派生类中访问
     //~ Begin APawn Interface

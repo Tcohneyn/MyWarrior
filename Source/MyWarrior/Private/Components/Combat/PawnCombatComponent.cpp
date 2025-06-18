@@ -1,6 +1,7 @@
 // Tcohneyn All Rights Reserved
 
 #include "Components/Combat/PawnCombatComponent.h"
+#include "Components/BoxComponent.h"
 #include "Items/Weapons/WarriorWeaponBase.h"
 #include "WarriorDebugHelper.h"
 
@@ -12,6 +13,9 @@ void UPawnCombatComponent::RegisterSpawnedWeapon(
     check(InWeaponToRegister);
 
     CharacterCarriedWeaponMap.Emplace(InWeaponTagToRegister, InWeaponToRegister);
+
+    InWeaponToRegister->OnWeaponHitTarget.BindUObject(this,&ThisClass::OnHitTargetActor);
+    InWeaponToRegister->OnWeaponPulledFromTarget.BindUObject(this, &ThisClass::OnWeaponPulledFromTargetActor);
 
     if (bRegisterAsEquippedWeapon)
     {
@@ -41,6 +45,32 @@ AWarriorWeaponBase* UPawnCombatComponent::GetCharacterCurrentEquippedWeapon() co
 
     return GetCharacterCarriedWeaponByTag(CurrentEquippedWeaponTag);
 }
+
+
+void UPawnCombatComponent::ToggleWeaponCollision(bool bShouldEnable, EToggleDamageType ToggleDamageType)
+{
+    if (ToggleDamageType == EToggleDamageType::CurrentEquippedWeapon)
+    {
+        AWarriorWeaponBase* WeaponToToggle = GetCharacterCurrentEquippedWeapon();
+        check(WeaponToToggle);
+        if (bShouldEnable)
+        {
+            WeaponToToggle->GetWeaponCollisionBox()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+            //Debug::Print(WeaponToToggle->GetName() + TEXT(" Collision Enabled"), FColor::Green);
+        }
+        else
+        {
+            WeaponToToggle->GetWeaponCollisionBox()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+            //Debug::Print(WeaponToToggle->GetName() + TEXT(" Collision Disabled"), FColor::Red);
+            OverlappedActors.Empty();
+        }
+    }
+    //TODO:Handle body collision boxes
+}
+
+void UPawnCombatComponent::OnHitTargetActor(AActor* HitActor) {}
+
+void UPawnCombatComponent::OnWeaponPulledFromTargetActor(AActor* InteractedActor) {}
 
 //FGameplayTag UPawnCombatComponent::GetCharacterCurrentEquippedWeaponTag() const
 //{
