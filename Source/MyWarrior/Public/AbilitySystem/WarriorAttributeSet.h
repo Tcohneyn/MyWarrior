@@ -7,29 +7,31 @@
 #include "AbilitySystem/WarriorAbilitySystemComponent.h"
 #include "WarriorAttributeSet.generated.h"
 
-#define ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
-GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) \
-GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
-GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
-GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
+#define ATTRIBUTE_ACCESSORS(ClassName, PropertyName)                                                                                       \
+    GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName)                                                                             \
+    GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName)                                                                                           \
+    GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName)                                                                                           \
+    GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
 UCLASS()
 class MYWARRIOR_API UWarriorAttributeSet : public UAttributeSet
 {
-	GENERATED_BODY()
-	
-	public:
+    GENERATED_BODY()
+
+public:
     UWarriorAttributeSet();
 
-	UPROPERTY(BlueprintReadOnly, Category = "Health")
+    	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Health")
     FGameplayAttributeData CurrentHealth;
     ATTRIBUTE_ACCESSORS(UWarriorAttributeSet, CurrentHealth)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Health")
+    UPROPERTY(BlueprintReadOnly, Category = "Health")
     FGameplayAttributeData MaxHealth;
     ATTRIBUTE_ACCESSORS(UWarriorAttributeSet, MaxHealth)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Rage")
+    UPROPERTY(BlueprintReadOnly, Category = "Rage")
     FGameplayAttributeData CurrentRage;
     ATTRIBUTE_ACCESSORS(UWarriorAttributeSet, CurrentRage)
 
@@ -44,4 +46,8 @@ class MYWARRIOR_API UWarriorAttributeSet : public UAttributeSet
     UPROPERTY(BlueprintReadOnly, Category = "Damage")
     FGameplayAttributeData DefensePower;
     ATTRIBUTE_ACCESSORS(UWarriorAttributeSet, DefensePower)
+
+    UPROPERTY(BlueprintReadOnly, Category = "Damage")
+    FGameplayAttributeData DamageTaken;
+    ATTRIBUTE_ACCESSORS(UWarriorAttributeSet, DamageTaken)
 };

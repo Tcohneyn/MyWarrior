@@ -24,6 +24,12 @@ public:
     UPROPERTY(EditDefaultsOnly, Category = "Equip")
     FGameplayTag EventTag;
 
+    UPROPERTY(EditDefaultsOnly, Category = "GameplayEffect")
+    FGameplayTag InCurrentAttackTypeTag;
+
+    UPROPERTY(EditDefaultsOnly, Category = "GameplayEffect")
+    TSubclassOf<UGameplayEffect> EffectClass;
+
 protected:
     UPROPERTY()
     UAbilityTask_WaitGameplayEvent* WaitEventTask;
@@ -47,10 +53,10 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, Category = "Light Attack")
     TMap<int, UAnimMontage*> AttackMontagesMap;
+
 private:
     UAbilityTask_PlayMontageAndWait* PlayMontageTask;
     float ComboCountResetTime = 0.3f;
     FTimerHandle ComboCountResetTimerHandle;
     FTimerDelegate ResetAttackComboCountDelegate;
-
 };

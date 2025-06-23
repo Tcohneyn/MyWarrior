@@ -6,6 +6,7 @@
 #include "Engine/World.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
+#include "Components/Combat/HeroCombatComponent.h"
 #include "WarriorFunctionLibrary.h"
 #include "Async/ParallelFor.h"
 #include "WarriorDebugHelper.h"
@@ -93,7 +94,11 @@ void UHero_LightAttackMaster::RunSequenceTasks()
 
 void UHero_LightAttackMaster::OnGameplayEventReceived(FGameplayEventData Payload) 
 {
-    Debug::Print(
-        TEXT("Hitting") + Payload.Target->GetName() + TEXT("with light attack Current Combo Count") + FString::FromInt(UsedComboCount),
-        FColor::Green);
+    //Debug::Print(
+    //    TEXT("Hitting") + Payload.Target->GetName() + TEXT("with light attack Current Combo Count") + FString::FromInt(UsedComboCount),
+    //    FColor::Green);
+    float InWeaponBaseDamage = GetHeroCombatComponentFromActorInfo()->GetHeroCurrentEquippedWeaponDamageAtLevel(GetAbilityLevel());
+    FGameplayEffectSpecHandle InSpecHandle = MakeHeroDamageEffectSpecHandle(
+        EffectClass, InWeaponBaseDamage, InCurrentAttackTypeTag, UsedComboCount);
+    NativeApplyEffectSpecHandleToTarget(static_cast<AActor*>(Payload.Target), InSpecHandle);
 }

@@ -13,7 +13,7 @@ class UAbilityTask_WaitGameplayEvent;
 UCLASS()
 class MYWARRIOR_API UHero_HeavyAttackMaster : public UWarriorHeroGameplayAbility
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 public:
     void ResetAttackComboCount();
 
@@ -22,6 +22,12 @@ public:
 
     UPROPERTY(EditDefaultsOnly, Category = "Equip")
     FGameplayTag EventTag;
+
+    UPROPERTY(EditDefaultsOnly, Category = "GameplayEffect")
+    FGameplayTag InCurrentAttackTypeTag;
+
+    UPROPERTY(EditDefaultsOnly, Category = "GameplayEffect")
+    TSubclassOf<UGameplayEffect> EffectClass;
 
 protected:
     UPROPERTY()
