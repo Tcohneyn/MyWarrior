@@ -23,8 +23,14 @@ public:
     UPROPERTY(EditDefaultsOnly, Category = "Equip")
     FGameplayTag EventTag;
 
+    UPROPERTY(EditDefaultsOnly, Category = "ToActor")
+    FGameplayTag ToActorEventTag;
+
     UPROPERTY(EditDefaultsOnly, Category = "GameplayEffect")
     FGameplayTag InCurrentAttackTypeTag;
+
+    UPROPERTY(EditDefaultsOnly, Category = "GameplayCue")
+    FGameplayTag WeaponHitSoundGameplayCueTag;
 
     UPROPERTY(EditDefaultsOnly, Category = "GameplayEffect")
     TSubclassOf<UGameplayEffect> EffectClass;
@@ -41,6 +47,8 @@ protected:
 
     UFUNCTION()
     void OnGameplayEventReceived(FGameplayEventData Payload);
+
+    void HandleApplyDamage(FGameplayEventData Payload);
 
     virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
         const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;

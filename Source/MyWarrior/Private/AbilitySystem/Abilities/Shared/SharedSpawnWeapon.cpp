@@ -1,6 +1,6 @@
 // Tcohneyn All Rights Reserved
 
-#include "AbilitySystem/Abilities/SharedSpawnWeapon.h"
+#include "AbilitySystem/Abilities/Shared/SharedSpawnWeapon.h"
 #include "Components/Combat/PawnCombatComponent.h"
 
 

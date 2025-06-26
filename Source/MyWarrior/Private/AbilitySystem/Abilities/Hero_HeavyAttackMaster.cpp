@@ -7,7 +7,9 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Components/Combat/HeroCombatComponent.h"
+#include "AbilitySystem/WarriorAbilitySystemComponent.h"
 #include "WarriorFunctionLibrary.h"
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Async/ParallelFor.h"
 #include "WarriorDebugHelper.h"
 void UHero_HeavyAttackMaster::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
@@ -88,13 +90,26 @@ void UHero_HeavyAttackMaster::RunSequenceTasks()
         });
 }
 
-void UHero_HeavyAttackMaster::OnGameplayEventReceived(FGameplayEventData Payload) 
+void UHero_HeavyAttackMaster::OnGameplayEventReceived(FGameplayEventData Payload)
 {
-    //Debug::Print(
-    //    TEXT("Hitting") + Payload.Target->GetName() + TEXT("with heavy attack Current Combo Count") + FString::FromInt(UsedComboCount),
-    //    FColor::Green);
+    // Debug::Print(
+    //     TEXT("Hitting") + Payload.Target->GetName() + TEXT("with heavy attack Current Combo Count") + FString::FromInt(UsedComboCount),
+    //     FColor::Green);
+    HandleApplyDamage(Payload);
+}
+
+void UHero_HeavyAttackMaster::HandleApplyDamage(FGameplayEventData Payload)
+{
+
     float InWeaponBaseDamage = GetHeroCombatComponentFromActorInfo()->GetHeroCurrentEquippedWeaponDamageAtLevel(GetAbilityLevel());
     FGameplayEffectSpecHandle InSpecHandle =
         MakeHeroDamageEffectSpecHandle(EffectClass, InWeaponBaseDamage, InCurrentAttackTypeTag, UsedComboCount);
-    NativeApplyEffectSpecHandleToTarget(static_cast<AActor*>(Payload.Target), InSpecHandle);
+    AActor* LocalTargetActor = static_cast<AActor*>(Payload.Target);
+    // GameplayCue
+    GetWarriorAbilitySystemComponentFromActorInfo()->ExecuteGameplayCue(WeaponHitSoundGameplayCueTag);
+    FActiveGameplayEffectHandle ActiveGameplayEffectHandle = NativeApplyEffectSpecHandleToTarget(LocalTargetActor, InSpecHandle);
+    if (ActiveGameplayEffectHandle.WasSuccessfullyApplied())
+    {
+        UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(LocalTargetActor, ToActorEventTag, Payload);
+    }
 }
