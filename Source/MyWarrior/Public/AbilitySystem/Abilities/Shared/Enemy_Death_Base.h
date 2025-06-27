@@ -7,7 +7,7 @@
 #include "Enemy_Death_Base.generated.h"
 
 class UAbilityTask_PlayMontageAndWait;
-
+class UNiagaraSystem;
 UCLASS()
 class MYWARRIOR_API UEnemy_Death_Base : public UWarriorEnemyGameplayAbility
 {
@@ -19,6 +19,9 @@ public:
     UPROPERTY(EditDefaultsOnly, Category = "GameplayCue")
     FGameplayTag DeathGameplayCueTag;
 
+    UPROPERTY(EditDefaultsOnly, Category = "Death")
+    TSoftObjectPtr<UNiagaraSystem> Dissolve_Niagara_System;
+
 protected:
     UFUNCTION()
     void OnMontage();
@@ -26,10 +29,11 @@ protected:
     virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
         const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
+    virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+        const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
+
     UAnimMontage* MontagesArrayRandom(TArray<UAnimMontage*> MontagesArrayToRandom);
 
 private:
     UAbilityTask_PlayMontageAndWait* PlayMontageTask;
-
-    const FArrayProperty* GetArrayProperty(const TArray<UAnimMontage*>& Array);
 };

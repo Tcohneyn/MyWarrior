@@ -5,3 +5,6 @@ Intermediate/
 Saved/
 Binaries/
 Build/
+Plugins/*/Binaries/
+Plugins/*/Intermediate/
+/Plugins/UnLua/Source/UnLuaDefaultParamCollectorUbtPlugin/obj

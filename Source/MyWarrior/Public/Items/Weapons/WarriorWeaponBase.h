@@ -22,9 +22,10 @@ public:
 
     FOnTargetInteractedDelegate OnWeaponHitTarget;
     FOnTargetInteractedDelegate OnWeaponPulledFromTarget;
-protected:
+
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
     TObjectPtr<UStaticMeshComponent> WeaponMesh;
+protected:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
     TObjectPtr<UBoxComponent> WeaponCollisionBox;

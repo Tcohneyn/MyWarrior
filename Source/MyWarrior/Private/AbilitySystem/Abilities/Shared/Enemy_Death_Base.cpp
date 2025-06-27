@@ -3,7 +3,9 @@
 #include "AbilitySystem/Abilities/Shared/Enemy_Death_Base.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "AbilitySystem/WarriorAbilitySystemComponent.h"
+#include "Characters/WarriorEnemyCharacter.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "NiagaraFunctionLibrary.h"
 void UEnemy_Death_Base::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
     const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
@@ -20,6 +22,13 @@ void UEnemy_Death_Base::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
         // GameplayCue
     GetWarriorAbilitySystemComponentFromActorInfo()->ExecuteGameplayCue(DeathGameplayCueTag);
+}
+
+void UEnemy_Death_Base::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+    const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+{
+    Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+    GetEnemyCharacterFromActorInfo()->OnEnemyDeath(Dissolve_Niagara_System);
 }
 
 UAnimMontage* UEnemy_Death_Base::MontagesArrayRandom(TArray<UAnimMontage*> MontagesArrayToRandom)
