@@ -1,5 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
+using System.IO;
 using UnrealBuildTool;
 using UnrealBuildTool.Rules;
 
@@ -17,12 +18,17 @@ public class MyWarrior : ModuleRules
 			"EnhancedInput",//
 			"GameplayTags",//
 			"GameplayTasks",//
-			"Niagara"
+			"Niagara",//
+			"UnLua",
+            "Lua",
+			"UMG"
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
-		PublicIncludePaths.AddRange(new string[]
+        PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Plugins/UnLua/Source/UnLua/Public"));
+
+        PublicIncludePaths.AddRange(new string[]
 	   {
 		   "MyWarrior/Public/Characters",
 		   "MyWarrior/Public/Items/Weapons"

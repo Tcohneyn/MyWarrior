@@ -3,16 +3,19 @@
 #include "Characters/WarriorEnemyCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/Combat/EnemyCombatComponent.h"
+#include "Components/UI/EnemyUIComponent.h"
 #include "Engine/AssetManager.h"
 #include "DataAssets/StartUpData/DataAsset_EnemyStartUpData.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/TimelineComponent.h"
+#include "Components/WidgetComponent.h"
 #include "NiagaraComponent.h"
 #include "Items/Weapons/WarriorWeaponBase.h"
 #include "Engine/StreamableManager.h"
 #include "NiagaraFunctionLibrary.h"
 //#include "Kismet/KismetMaterialLibrary.h"
 #include "Materials/MaterialParameterCollection.h"
+#include "Widgets/WarriorWidgetBase.h"
 #include "WarriorDebugHelper.h"
 AWarriorEnemyCharacter::AWarriorEnemyCharacter()
 {
@@ -29,13 +32,28 @@ AWarriorEnemyCharacter::AWarriorEnemyCharacter()
     GetCharacterMovement()->BrakingDecelerationWalking = 1000.f;
 
     EnemyCombatComponent = CreateDefaultSubobject<UEnemyCombatComponent>(TEXT("CombatComponent"));
+
+    EnemyUIComponent = CreateDefaultSubobject<UEnemyUIComponent>(TEXT("EnemyUIComponent"));
+
+    EnemyHealthWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("EnemyHealthWidgetComponent"));
+
+    EnemyHealthWidgetComponent->SetupAttachment(GetMesh());
 }
+
 
 UPawnCombatComponent* AWarriorEnemyCharacter::GetPawnCombatComponent() const
 {
     return EnemyCombatComponent;
 }
 
+UPawnUIComponent* AWarriorEnemyCharacter::GetPawnUIComponent() const
+{
+    return EnemyUIComponent;
+}
+UEnemyUIComponent* AWarriorEnemyCharacter::GetEnemyUIComponent() const
+{
+    return EnemyUIComponent;
+}
 void AWarriorEnemyCharacter::PossessedBy(AController* NewController)
 {
     Super::PossessedBy(NewController);
@@ -49,15 +67,14 @@ void AWarriorEnemyCharacter::InitEnemyStartUpData()
         return;
     }
     UAssetManager::GetStreamableManager().RequestAsyncLoad(
-        CharacterStartUpData.ToSoftObjectPath(), FStreamableDelegate::CreateLambda(
-                                                     [this]()
-                                                     {
-                                                         if (UDataAsset_StartUpDataBase* LoadedData = CharacterStartUpData.Get())
-                                                         {
-                                                             LoadedData->GiveToAbilitySystemComponent(WarriorAbilitySystemComponent);
-                                                             // Debug::Print(TEXT("Enemy StartUpData Loaded"), FColor::Green);
-                                                         }
-                                                     }));
+        CharacterStartUpData.ToSoftObjectPath(), FStreamableDelegate::CreateLambda([this]()
+ {
+           if (UDataAsset_StartUpDataBase* LoadedData = CharacterStartUpData.Get())
+         {
+            LoadedData->GiveToAbilitySystemComponent(WarriorAbilitySystemComponent);
+                 // Debug::Print(TEXT("Enemy StartUpData Loaded"), FColor::Green);
+         }
+  }));
 }
 
 void AWarriorEnemyCharacter::BeginPlay()
@@ -67,6 +84,11 @@ void AWarriorEnemyCharacter::BeginPlay()
     DissolveTimeline->CreationMethod = EComponentCreationMethod::UserConstructionScript;
     this->BlueprintCreatedComponents.Add(DissolveTimeline);  // 避免GC回收
     DissolveTimeline->RegisterComponent();
+
+    if (UWarriorWidgetBase* HealthWidget = Cast<UWarriorWidgetBase>(EnemyHealthWidgetComponent->GetUserWidgetObject()))
+    {
+        HealthWidget->InitEnemyCreatedWidget(this);
+    }
 }
 
 void AWarriorEnemyCharacter::OnEnemyDeath(TSoftObjectPtr<UNiagaraSystem> Dissolve_Niagara_System)
@@ -86,6 +108,7 @@ void AWarriorEnemyCharacter::OnEnemyDeath(TSoftObjectPtr<UNiagaraSystem> Dissolv
     Task1();
     Task2();
 }
+
 
 void AWarriorEnemyCharacter::SetDissolveTimeline()
 {

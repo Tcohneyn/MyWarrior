@@ -8,6 +8,7 @@
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
 #include "Interfaces/PawnCombatInterface.h"
+#include "Interfaces/PawnUIInterface.h"
 #include "WarriorBaseCharacter.generated.h"
 // 包含生成的头文件，用于序列化和反射
 
@@ -19,7 +20,7 @@ class UDataAsset_StartUpDataBase;
 
 
 UCLASS()
-class MYWARRIOR_API AWarriorBaseCharacter : public ACharacter, public IAbilitySystemInterface,public IPawnCombatInterface
+class MYWARRIOR_API AWarriorBaseCharacter : public ACharacter, public IAbilitySystemInterface,public IPawnCombatInterface,public IPawnUIInterface
 // 定义AWarriorBaseCharacter类，继承自ACharacter和IAbilitySystemInterface
 {
     GENERATED_BODY()
@@ -41,6 +42,9 @@ public:
     virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
     //~ End IPawnCombatComponent Interface
 
+    //~ Begin IPawnUIInterface Interface
+    virtual UPawnUIComponent* GetPawnUIComponent() const override;
+    //~ End  IPawnUIInterface Interface
 protected:
     // 受保护成员变量和函数部分
 

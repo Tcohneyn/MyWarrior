@@ -15,6 +15,7 @@ class UCameraComponent;
 class UDataAsset_InputConfig;
 struct FInputActionValue;
 class UHeroCombatComponent;
+class UHeroUIComponent;
 
 UCLASS()
 // Unreal Engine的宏，定义一个UClass，表示这是一个可以被实例化的类
@@ -31,6 +32,13 @@ public:
      //~ Begin IPawnCombatComponent Interface
     virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
     //~ End IPawnCombatComponent Interface
+
+    //~ Begin IPawnUIInterface Interface
+    virtual UPawnUIComponent* GetPawnUIComponent() const override;
+    //~ End  IPawnUIInterface Interface
+
+    virtual UHeroUIComponent* GetHeroUIComponent() const override;
+
 protected:
     // 受保护成员函数和变量，只能在类内部和派生类中访问
     //~ Begin APawn Interface
@@ -59,6 +67,9 @@ private:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
     UHeroCombatComponent* HeroCombatComponent;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI", meta = (AllowPrivateAccess = "true"))
+    UHeroUIComponent* HeroUIComponent;
 #pragma endregion
     // 区域标记结束
 

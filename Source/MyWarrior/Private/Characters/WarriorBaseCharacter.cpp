@@ -34,6 +34,11 @@ UPawnCombatComponent* AWarriorBaseCharacter::GetPawnCombatComponent() const
     return nullptr;
 }
 
+UPawnUIComponent* AWarriorBaseCharacter::GetPawnUIComponent() const
+{
+    return nullptr;
+}
+
 // 当角色被控制时调用
 void AWarriorBaseCharacter::PossessedBy(AController* NewController)
 {

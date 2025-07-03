@@ -12,6 +12,9 @@
 class UEnemyCombatComponent;
 class UTimelineComponent;
 class UNiagaraSystem;
+class UEnemyUIComponent;
+class UWidgetComponent;
+
 UCLASS()
 class MYWARRIOR_API AWarriorEnemyCharacter : public AWarriorBaseCharacter, public IEnemy_Death_Interface
 {
@@ -20,12 +23,17 @@ class MYWARRIOR_API AWarriorEnemyCharacter : public AWarriorBaseCharacter, publi
 public:
     AWarriorEnemyCharacter();
 
+    virtual UEnemyUIComponent* GetEnemyUIComponent() const override;
+
     //~ Begin IPawnCombatComponent Interface
     virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
     //~ End IPawnCombatComponent Interface
     //~ Begin IEnemy_Death Interface
     virtual void OnEnemyDeath(TSoftObjectPtr<UNiagaraSystem> Dissolve_Niagara_System) override;
     //~ End IEnemy_Death Interface
+    //~ Begin IPawnUIInterface Interface
+    virtual UPawnUIComponent* GetPawnUIComponent() const override;
+    //~ End  IPawnUIInterface Interface
 protected:
     //~ Begin APawn Interface
     virtual void PossessedBy(AController* NewController) override;
@@ -38,6 +46,12 @@ protected:
 
     UPROPERTY(VisibleAnywhere, Category = "Combat")
     TObjectPtr<UEnemyCombatComponent> EnemyCombatComponent;
+
+    UPROPERTY(VisibleAnywhere, Category = "UI")
+    TObjectPtr<UEnemyUIComponent> EnemyUIComponent;
+
+    UPROPERTY(VisibleAnywhere, Category = "UI")
+    TObjectPtr<UWidgetComponent> EnemyHealthWidgetComponent;
 
     FStreamableManager StreamableManager;
 

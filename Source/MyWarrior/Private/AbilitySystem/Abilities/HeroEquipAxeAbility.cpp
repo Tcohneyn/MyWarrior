@@ -12,6 +12,8 @@
 #include "EnhancedInputSubsystems.h"
 #include "Controllers/WarriorHeroController.h"
 #include "AbilitySystem/WarriorAbilitySystemComponent.h"
+#include "Characters/WarriorHeroCharacter.h"
+#include "Components/UI/HeroUIComponent.h"
 void UHeroEquipAxeAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
     const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
@@ -86,16 +88,26 @@ void UHeroEquipAxeAbility::RunSequenceTasks()
         ASC->GrantHeroWeaponAbilities(CacheHeroWeaponData.DefaultWeaponAbilities, GetAbilityLevel(), NewWeaponHandles);
         CurrentHeroWeapon->AssignGrantedAbilitySpecHandles(NewWeaponHandles);
         };
+    auto Task4 = [this] { 
+        AWarriorHeroCharacter* Hero = GetHeroCharacterFromActorInfo();
+        UHeroUIComponent* HeroUI = Hero->GetHeroUIComponent();
+        HeroUI->OnEquippedWeaponChanged.Broadcast(CacheHeroWeaponData.SoftWeaponIconTexture);
+        };
 
     // 使用ParallelFor并行执行
-    ParallelFor(3,
-        [&](int32 Index)
-        {
-            switch (Index)
-            {
-                case 0: Task1(); break;
-                case 1: Task2(); break;
-                case 2: Task3(); break;
-            }
-        });
+    //ParallelFor(4,
+    //    [&](int32 Index)
+    //    {
+    //        switch (Index)
+    //        {
+    //            case 0: Task1(); break;
+    //            case 1: Task2(); break;
+    //            case 2: Task3(); break;
+    //            case 3: Task4(); break;
+    //        }
+    //    });
+    Task1();
+    Task2();
+    Task3();
+    Task4();
 }

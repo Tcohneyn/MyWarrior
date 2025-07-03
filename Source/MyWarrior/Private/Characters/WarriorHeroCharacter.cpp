@@ -1,7 +1,6 @@
 // Tcohneyn All Rights Reserved
 
 #include "Characters/WarriorHeroCharacter.h"
-#include "WarriorDebugHelper.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
@@ -13,6 +12,9 @@
 #include "AbilitySystem/WarriorAbilitySystemComponent.h"
 #include "Components/Input/WarriorEnhancedInputComponent.h"
 #include "Components/Combat/HeroCombatComponent.h"
+#include "Components/UI/HeroUIComponent.h"
+
+#include "WarriorDebugHelper.h"
 // 构造函数：AWarriorHeroCharacter的构造函数
 AWarriorHeroCharacter::AWarriorHeroCharacter()
 {
@@ -54,11 +56,23 @@ AWarriorHeroCharacter::AWarriorHeroCharacter()
     GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 
     HeroCombatComponent = CreateDefaultSubobject<UHeroCombatComponent>(TEXT("HeroCombatComponent"));
+
+    HeroUIComponent = CreateDefaultSubobject<UHeroUIComponent>(TEXT("HeroUIComponent"));
 }
 
 UPawnCombatComponent* AWarriorHeroCharacter::GetPawnCombatComponent() const
 {
     return HeroCombatComponent;
+}
+
+UPawnUIComponent* AWarriorHeroCharacter::GetPawnUIComponent() const
+{
+    return HeroUIComponent;
+}
+
+UHeroUIComponent* AWarriorHeroCharacter::GetHeroUIComponent() const
+{
+    return HeroUIComponent;
 }
 
 // AWarriorHeroCharacter类的PossessedBy函数，用于在角色被控制器拥有时执行一些初始化操作
