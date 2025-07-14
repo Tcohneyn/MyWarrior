@@ -12,31 +12,42 @@ local M = UnLua.Class()
 --function M:Initialize(Initializer)
 --end
 
---function M:PreConstruct(IsDesignTime)
---end
+--[[ function M:PreConstruct(IsDesignTime)
+    self.WarriorSizeBox_Base:SetWidthHeightOverride(self.SizeBoxWidthOverride, self.SizeBoxHeightOverride)
+end ]]
 
- function M:Construct()
+function M:Construct()
     self:LoadSoftTextureAndSetAsIcon(self.SoftTexture)
 end
 
-function M:LoadSoftTextureAndSetAsIcon(SoftTexture)
-    if SoftTexture == nil then
+--[[ function M:LoadSoftTextureAndSetAsIcon(SoftTexture)
+    local Texture = UE.UKismetSystemLibrary.IsValidSoftObjectReference(SoftTexture)
+        -- 确保 SoftTexture 是有效的 Unreal 对象（userdata）
+    if type(SoftTexture) ~= "userdata" then
+        print("[Error] SoftTexture is not a valid UObject")
+        self:SetDefaultIcon()
+        return
+    end
+    if Texture then
         self.Image_icon:SetVisibility(UE.ESlateVisibility.Hidden)
     else
-        local AssetId = UE.UKismetSystemLibrary.GetPrimaryAssetIdFromSoftObjectReference(self,SoftTexture)
-        local AsyncActionLoadPrimaryAsset = UE.UAsyncActionLoadPrimaryAsset.AsyncLoadPrimaryAsset(self,AssetId, nil)
+        local AssetId = UE.UKismetSystemLibrary.GetPrimaryAssetIdFromSoftObjectReference(self, SoftTexture)
+        local AsyncActionLoadPrimaryAsset = UE.UAsyncActionLoadPrimaryAsset.AsyncLoadPrimaryAsset(self, AssetId, nil)
         AsyncActionLoadPrimaryAsset.Completed:Add(self, self.ReceiveLoadedTexture)
         AsyncActionLoadPrimaryAsset:Activate()
     end
-
 end
 
-    function M:ReceiveLoadedTexture(Object)
-        local Texture = UE.UTexture2D.Cast(Object)
-        if Texture then
-            self.Image_icon:SetBrushFromTexture(Texture)
-            self.Image_icon:SetVisibility(UE.ESlateVisibility.Visible)
-        end
+function M:ReceiveLoadedTexture(Object)
+    if not Object or Object:IsPendingKill() then
+        print("Error: Texture is invalid or released!")
+        return
     end
+    local Texture = UE.UTexture2D.Cast(Object)
+    if Texture then
+        self.Image_icon:SetBrushFromTexture(Texture)
+        self.Image_icon:SetVisibility(UE.ESlateVisibility.Visible)
+    end
+end ]]
 
 return M
