@@ -19,7 +19,9 @@ public class MyWarrior : ModuleRules
 			"GameplayTags",//
 			"GameplayTasks",//
 			"Niagara",//
-			"UnLua",
+			"AnimGraphRuntime",
+            "MotionWarping",
+            "UnLua",
             "Lua",
 			"UMG"
         });

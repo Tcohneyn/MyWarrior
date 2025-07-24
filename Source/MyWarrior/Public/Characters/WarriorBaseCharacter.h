@@ -18,6 +18,7 @@ class UWarriorAttributeSet;
 // 声明UWarriorAttributeSet类，用于前向声明
 class UDataAsset_StartUpDataBase;
 
+class UMotionWarpingComponent;
 
 UCLASS()
 class MYWARRIOR_API AWarriorBaseCharacter : public ACharacter, public IAbilitySystemInterface,public IPawnCombatInterface,public IPawnUIInterface
@@ -64,6 +65,9 @@ protected:
     // 角色属性集，可见于编辑器，可蓝图读取，分类为"AbilitySystem"
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AbilitySystem")
     TObjectPtr<UWarriorAttributeSet> WarriorAttributeSet;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MotionWarping")
+    UMotionWarpingComponent* MotionWarpingComponent;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterData")
     TSoftObjectPtr<UDataAsset_StartUpDataBase> CharacterStartUpData;

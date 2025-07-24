@@ -3,6 +3,7 @@
 #include "Items/Weapons/WarriorWeaponBase.h"
 #include "Components/BoxComponent.h"
 #include "WarriorDebugHelper.h"
+#include "WarriorFunctionLibrary.h"
 AWarriorWeaponBase::AWarriorWeaponBase()
 {
 
@@ -26,12 +27,16 @@ void AWarriorWeaponBase::OnCollisionBoxBeginOverlap(UPrimitiveComponent* Overlap
     checkf(WeaponOwningPawn, TEXT("Forget to assign an instiagtor as the owning pawn for the weapon %s"),*GetName());
     if (APawn* HitPawn = Cast<APawn>(OtherActor))
     {
-        if (WeaponOwningPawn != HitPawn)
+        if (UWarriorFunctionLibrary::IsTargetPawnHostile(WeaponOwningPawn, HitPawn))
         {
-            //Debug::Print(GetName() + TEXT("begin overlap with")+HitPawn->GetName(),FColor::Green);
             OnWeaponHitTarget.ExecuteIfBound(OtherActor);
-            //TODO:Implement hit chek for enemy characters
         }
+        //if (WeaponOwningPawn != HitPawn)
+        //{
+        //    //Debug::Print(GetName() + TEXT("begin overlap with")+HitPawn->GetName(),FColor::Green);
+        //    OnWeaponHitTarget.ExecuteIfBound(OtherActor);
+        //    //TODO:Implement hit chek for enemy characters
+        //}
     }
 }
 
@@ -42,12 +47,16 @@ void AWarriorWeaponBase::OnCollisionBoxEndOverlap(
     checkf(WeaponOwningPawn, TEXT("Forget to assign an instiagtor as the owning pawn for the weapon %s"), *GetName());
     if (APawn* HitPawn = Cast<APawn>(OtherActor))
     {
-        if (WeaponOwningPawn != HitPawn)
+        if (UWarriorFunctionLibrary::IsTargetPawnHostile(WeaponOwningPawn, HitPawn))
         {
-            //Debug::Print(GetName() + TEXT("end overlap with")+HitPawn->GetName(),FColor::Red);
-            OnWeaponPulledFromTarget.ExecuteIfBound(OtherActor);
-            // TODO:Implement hit chek for enemy characters
+            OnWeaponHitTarget.ExecuteIfBound(OtherActor);
         }
+        //if (WeaponOwningPawn != HitPawn)
+        //{
+        //    //Debug::Print(GetName() + TEXT("end overlap with")+HitPawn->GetName(),FColor::Red);
+        //    OnWeaponPulledFromTarget.ExecuteIfBound(OtherActor);
+        //    // TODO:Implement hit chek for enemy characters
+        //}
     }
 }
 

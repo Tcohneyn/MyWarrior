@@ -10,28 +10,33 @@
 class UWarriorAbilitySystemComponent;
 class UPawnCombatComponent;
 
-
 UCLASS()
 class MYWARRIOR_API UWarriorFunctionLibrary : public UBlueprintFunctionLibrary
 {
-	GENERATED_BODY()
-	
-	public:
+    GENERATED_BODY()
+
+public:
     static UWarriorAbilitySystemComponent* NativeGetWarriorASCFromActor(AActor* InActor);
 
-	UFUNCTION(BlueprintCallable, Category = "Warrior|FunctionLibrary")
+    UFUNCTION(BlueprintCallable, Category = "Warrior|FunctionLibrary")
     static void AddGameplayTagToActorIfNone(AActor* InActor, FGameplayTag TagToAdd);
 
-	UFUNCTION(BlueprintCallable, Category = "Warrior|FunctionLibrary")
+    UFUNCTION(BlueprintCallable, Category = "Warrior|FunctionLibrary")
     static void RemoveGameplayTagFromActor(AActor* InActor, FGameplayTag TagToRemove);
 
-	static bool NativeDoesActorHaveTag(AActor* InActor, FGameplayTag TagToCheck);
+    UFUNCTION(BlueprintCallable, Category = "Warrior|FunctionLibrary")
+    static bool NativeDoesActorHaveTag(AActor* InActor, FGameplayTag TagToCheck);
 
-	UFUNCTION(BlueprintCallable, Category = "Warrior|FunctionLibrary", meta = (DisplayName = "Does Actor Have Tag", ExpandEnumAsExecs = "OutConfirmType"))
+    UFUNCTION(BlueprintCallable, Category = "Warrior|FunctionLibrary",
+        meta = (DisplayName = "Does Actor Have Tag", ExpandEnumAsExecs = "OutConfirmType"))
     static void BP_DoesActorHaveTag(AActor* InActor, FGameplayTag TagToCheck, EWarriorConfirmType& OutConfirmType);
 
-	static UPawnCombatComponent* NativeGetPawnCombatComponentFromActor(AActor* InActor);
+    static UPawnCombatComponent* NativeGetPawnCombatComponentFromActor(AActor* InActor);
 
-	UFUNCTION(BlueprintCallable, Category = "Warrior|FunctionLibrary", meta = (DisplayName = "Get Pawn Combat Component From Actor", ExpandEnumAsExecs = "OutValidType"))
-	static UPawnCombatComponent* BP_GetPawnCombatComponentFromActor(AActor* InActor, EWarriorValidType& OutValidType);
+    UFUNCTION(BlueprintCallable, Category = "Warrior|FunctionLibrary",
+        meta = (DisplayName = "Get Pawn Combat Component From Actor", ExpandEnumAsExecs = "OutValidType"))
+    static UPawnCombatComponent* BP_GetPawnCombatComponentFromActor(AActor* InActor, EWarriorValidType& OutValidType);
+
+    UFUNCTION(BlueprintCallable, Category = "Warrior|FunctionLibrary")
+    static bool IsTargetPawnHostile(APawn* QueryPawn, APawn* TargetPawn);
 };

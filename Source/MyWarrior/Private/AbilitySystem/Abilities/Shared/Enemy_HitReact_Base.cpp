@@ -15,7 +15,7 @@ void UEnemy_HitReact_Base::ActivateAbility(const FGameplayAbilitySpecHandle Hand
         if (FaceAttackter)
         {
             FVector StartVector = GetEnemyCharacterFromActorInfo()->GetActorLocation();
-            //FGameplayEventData EventData = *TriggerEventData;
+            // FGameplayEventData EventData = *TriggerEventData;
             FVector TargetVector = EventDataCopy.Instigator->GetActorLocation();
             FRotator NewRotation = UKismetMathLibrary::FindLookAtRotation(StartVector, TargetVector);
             GetEnemyCharacterFromActorInfo()->SetActorRotation(NewRotation, ETeleportType::None);
@@ -45,9 +45,16 @@ void UEnemy_HitReact_Base::ActivateAbility(const FGameplayAbilitySpecHandle Hand
             UKismetSystemLibrary::Delay(GetWorld(), 0.2f, LatentInfo);
         }
     };
-    // 顺序执行确保线程安全
+
+    auto Task3 = [this, Handle, &ActorInfo, ActivationInfo]
+    {
+        FGameplayEffectSpecHandle EffectSpecHandle = MakeOutgoingGameplayEffectSpec(GameplayEffectClass, 1.f);
+        ApplyGameplayEffectSpecToOwner(Handle, ActorInfo, ActivationInfo, EffectSpecHandle);
+    };
+        // 顺序执行确保线程安全
     Task1();
     Task2();
+    Task3();
 }
 
 void UEnemy_HitReact_Base::OnMontage()

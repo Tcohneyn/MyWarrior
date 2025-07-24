@@ -5,6 +5,8 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystem/WarriorAbilitySystemComponent.h"
 #include "Interfaces/PawnCombatInterface.h"
+#include "GenericTeamAgentInterface.h"
+#include "WarriorDebugHelper.h"
 UWarriorAbilitySystemComponent* UWarriorFunctionLibrary::NativeGetWarriorASCFromActor(AActor* InActor)
 {
     check(InActor);
@@ -33,6 +35,7 @@ void UWarriorFunctionLibrary::RemoveGameplayTagFromActor(AActor* InActor, FGamep
 bool UWarriorFunctionLibrary::NativeDoesActorHaveTag(AActor* InActor, FGameplayTag TagToCheck)
 {
     UWarriorAbilitySystemComponent* ASC = NativeGetWarriorASCFromActor(InActor);
+    //Debug::Print(ASC->HasMatchingGameplayTag(TagToCheck) ? TEXT("true") : TEXT("false"));
     return ASC->HasMatchingGameplayTag(TagToCheck);
 }
 
@@ -56,4 +59,18 @@ UPawnCombatComponent* UWarriorFunctionLibrary::BP_GetPawnCombatComponentFromActo
     UPawnCombatComponent* CombatComponent = NativeGetPawnCombatComponentFromActor(InActor);
     OutValidType = CombatComponent ? EWarriorValidType::Valid : EWarriorValidType::InValid;
     return CombatComponent;
+}
+
+bool UWarriorFunctionLibrary::IsTargetPawnHostile(APawn* QueryPawn, APawn* TargetPawn)
+{
+    check(QueryPawn && TargetPawn);
+
+    IGenericTeamAgentInterface* QueryTeamAgent = Cast<IGenericTeamAgentInterface>(QueryPawn->GetController());
+    IGenericTeamAgentInterface* TargetTeamAgent = Cast<IGenericTeamAgentInterface>(TargetPawn->GetController());
+
+    if (QueryTeamAgent && TargetTeamAgent) 
+    {
+        return QueryTeamAgent->GetGenericTeamId() != TargetTeamAgent->GetGenericTeamId();
+    }
+    return false;
 }

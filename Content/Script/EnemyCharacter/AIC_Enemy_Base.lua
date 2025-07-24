@@ -17,6 +17,26 @@ function M:ReceivePossess(PossessedPawn)
         -- 如果行为树无效，打印错误信息
         UE.UKismetSystemLibrary.PrintString(self, "Error: Behavior Tree is not valid or not set.")
     end
+    local BlackboardComp = self.Blackboard
+    if not BlackboardComp then
+        UE.UKismetSystemLibrary.PrintString(self, "Error: Blackboard is nil.")
+        return
+    end
+    local Character = PossessedPawn:Cast(UE.ACharacter)
+    if not Character then
+        UE.UKismetSystemLibrary.PrintString(self, "Error: PossessedPawn is not ACharacter.")
+        return
+    end
+    local Movement = Character.CharacterMovement
+    if not Movement then
+        UE.UKismetSystemLibrary.PrintString(self, "Error: GetCharacterMovement returned nil.")
+        return
+    end
+   local DefaultMaxWalkSpeed = Movement.MaxWalkSpeed
+   local Keyname = UE.UKismetSystemLibrary.MakeLiteralName("DefaultMaxWalkSpeed")
+    if BlackboardComp then
+        BlackboardComp:SetValueAsFloat(Keyname, DefaultMaxWalkSpeed)
+    end
 end
 
 return M

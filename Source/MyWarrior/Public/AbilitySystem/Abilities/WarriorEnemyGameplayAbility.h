@@ -21,6 +21,8 @@ class MYWARRIOR_API UWarriorEnemyGameplayAbility : public UWarriorGameplayAbilit
     UFUNCTION(BlueprintPure, Category = "Warrior|Ability")
     UEnemyCombatComponent* GetEnemyCombatComponentFromActorInfo();
 
+    UFUNCTION(BlueprintPure, Category = "Warrior|Ability")
+    FGameplayEffectSpecHandle BP_MakeEnemyDamageEffectSpecHandle(TSubclassOf<UGameplayEffect> EffectClass,const FScalableFloat& InDamageScalableFloat);
     private:
         TWeakObjectPtr<AWarriorEnemyCharacter> CachedWarriorEnemyCharacter;
 };

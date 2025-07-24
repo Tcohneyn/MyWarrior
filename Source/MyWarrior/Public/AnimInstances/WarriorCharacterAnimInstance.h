@@ -53,4 +53,7 @@ protected:
     UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "AnimData|LocomotionData")
     bool bHasAcceleration;
     // 表示角色是否有加速度
+
+    UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "AnimData|LocomotionData")
+    float LocomotionDirection;
 };

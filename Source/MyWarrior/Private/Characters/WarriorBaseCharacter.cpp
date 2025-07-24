@@ -3,6 +3,7 @@
 #include "Characters/WarriorBaseCharacter.h"
 #include "AbilitySystem/WarriorAbilitySystemComponent.h"
 #include "AbilitySystem/WarriorAttributeSet.h"
+#include "MotionWarpingComponent.h"
 
 // 构造函数，设置默认值
 AWarriorBaseCharacter::AWarriorBaseCharacter()
@@ -20,6 +21,9 @@ AWarriorBaseCharacter::AWarriorBaseCharacter()
 
     // 创建并初始化WarriorAttributeSet子对象
     WarriorAttributeSet = CreateDefaultSubobject<UWarriorAttributeSet>(TEXT("WarriorAttributeSet"));
+
+    // 创建并初始化MotionWarpingComponent子对象
+    MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpingComponent"));
 }
 
 // 获取能力系统组件

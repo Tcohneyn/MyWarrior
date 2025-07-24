@@ -24,6 +24,9 @@ public:
     UPROPERTY(EditDefaultsOnly, Category = "HitReact")
     TArray<UAnimMontage*> MontagesToPlay;
 
+    UPROPERTY(EditDefaultsOnly, Category = "HitReact")
+    TSubclassOf<UGameplayEffect> GameplayEffectClass;
+
 protected:
     UFUNCTION()
     void OnMontage();
