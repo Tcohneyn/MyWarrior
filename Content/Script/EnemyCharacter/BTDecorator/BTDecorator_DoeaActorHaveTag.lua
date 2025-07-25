@@ -18,7 +18,10 @@ function M:PerformConditionCheckAI(OwnerController, ControlledPawn)
     end
 
     -- 如果设置了 "Inverse Condition Check"，则逻辑取反
-    local HasTag = UE.UWarriorFunctionLibrary.NativeDoesActorHaveTag(ActorToCheck, self.TagToCheck)
+    --local ConfirmType = {}
+    --UE.UKismetSystemLibrary.PrintString(self, "TagToCheck: " .. tostring(self.TagToCheck))
+      local HasTag = UE.UWarriorFunctionLibrary.NativeDoesActorHaveTag(ActorToCheck, self.TagToCheck)
+    --UE.UKismetSystemLibrary.PrintString(self, "HasTag = " .. tostring(HasTag))
     if HasTag then
         -- 如果没有设置 "Inverse Condition Check"，则返回 true
         if self.InverseConditionCheck then
