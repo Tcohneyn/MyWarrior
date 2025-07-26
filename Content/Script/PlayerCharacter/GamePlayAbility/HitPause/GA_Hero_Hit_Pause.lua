@@ -35,10 +35,10 @@ function M:ExecuteHitPause()
         Screen.Print("时间膨胀已恢复，当前膨胀系数: 1.0")
         self:K2_EndAbility()
     end)() ]]
+    -- 记录当前时间膨胀状态
+    UE.UGameplayStatics.SetGlobalTimeDilation(world, 0.1)
+    --Screen.Print("时间膨胀已激活，当前膨胀系数: 0.1")
     coroutine.resume(coroutine.create(function()
-        -- 记录当前时间膨胀状态
-        UE.UGameplayStatics.SetGlobalTimeDilation(world, 0.1)
-        --Screen.Print("时间膨胀已激活，当前膨胀系数: 0.1")
 
         -- 关键！使用Unreal原生延迟函数（Latent Function）
         UE.UKismetSystemLibrary.Delay(world, self.HitPauseDuration)
