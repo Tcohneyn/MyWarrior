@@ -5,11 +5,24 @@
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "WarriorTypes/WarriorEnumTypes.h"
+#include "WarriorGameplayTags.h"
 #include "WarriorFunctionLibrary.generated.h"
+
+USTRUCT(BlueprintType)
+struct FHitReactResult
+{
+    GENERATED_BODY()
+    UPROPERTY(BlueprintReadOnly)
+    float Angle;
+    UPROPERTY(BlueprintReadOnly)
+    FGameplayTag Tag;
+};
 
 class UWarriorAbilitySystemComponent;
 class UPawnCombatComponent;
 struct FScalableFloat;
+
+
 UCLASS()
 class MYWARRIOR_API UWarriorFunctionLibrary : public UBlueprintFunctionLibrary
 {
@@ -42,4 +55,7 @@ public:
 
     UFUNCTION(BlueprintPure, Category = "Warrior|FunctionLibrary", meta = (CompactNodeTitle = "Get Value At Level"))
     static float GetScalableFloatValueAtLevel(const FScalableFloat& InScalableFloat, float InLevel = 1.f);
+
+    UFUNCTION(BlueprintCallable, Category = "Warrior|FunctionLibrary")
+    static FHitReactResult ComputeHitReactDirectionTag(AActor* InAttacker, AActor* InVictim);
 };

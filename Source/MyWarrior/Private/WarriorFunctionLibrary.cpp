@@ -1,12 +1,13 @@
 // Tcohneyn All Rights Reserved
 
-
 #include "WarriorFunctionLibrary.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystem/WarriorAbilitySystemComponent.h"
 #include "Interfaces/PawnCombatInterface.h"
 #include "GenericTeamAgentInterface.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "WarriorDebugHelper.h"
+#include "WarriorGameplayTags.h"
 UWarriorAbilitySystemComponent* UWarriorFunctionLibrary::NativeGetWarriorASCFromActor(AActor* InActor)
 {
     check(InActor);
@@ -14,7 +15,7 @@ UWarriorAbilitySystemComponent* UWarriorFunctionLibrary::NativeGetWarriorASCFrom
     return CastChecked<UWarriorAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(InActor));
 }
 
-void UWarriorFunctionLibrary::AddGameplayTagToActorIfNone(AActor* InActor, FGameplayTag TagToAdd) 
+void UWarriorFunctionLibrary::AddGameplayTagToActorIfNone(AActor* InActor, FGameplayTag TagToAdd)
 {
     UWarriorAbilitySystemComponent* ASC = NativeGetWarriorASCFromActor(InActor);
     if (!ASC->HasMatchingGameplayTag(TagToAdd))
@@ -23,7 +24,7 @@ void UWarriorFunctionLibrary::AddGameplayTagToActorIfNone(AActor* InActor, FGame
     }
 }
 
-void UWarriorFunctionLibrary::RemoveGameplayTagFromActor(AActor* InActor, FGameplayTag TagToRemove) 
+void UWarriorFunctionLibrary::RemoveGameplayTagFromActor(AActor* InActor, FGameplayTag TagToRemove)
 {
     UWarriorAbilitySystemComponent* ASC = NativeGetWarriorASCFromActor(InActor);
     if (ASC->HasMatchingGameplayTag(TagToRemove))
@@ -35,11 +36,11 @@ void UWarriorFunctionLibrary::RemoveGameplayTagFromActor(AActor* InActor, FGamep
 bool UWarriorFunctionLibrary::NativeDoesActorHaveTag(AActor* InActor, FGameplayTag TagToCheck)
 {
     UWarriorAbilitySystemComponent* ASC = NativeGetWarriorASCFromActor(InActor);
-    //Debug::Print(ASC->HasMatchingGameplayTag(TagToCheck) ? TEXT("true") : TEXT("false"));
+    // Debug::Print(ASC->HasMatchingGameplayTag(TagToCheck) ? TEXT("true") : TEXT("false"));
     return ASC->HasMatchingGameplayTag(TagToCheck);
 }
 
-void UWarriorFunctionLibrary::BP_DoesActorHaveTag(AActor* InActor, FGameplayTag TagToCheck, EWarriorConfirmType& OutConfirmType) 
+void UWarriorFunctionLibrary::BP_DoesActorHaveTag(AActor* InActor, FGameplayTag TagToCheck, EWarriorConfirmType& OutConfirmType)
 {
     OutConfirmType = NativeDoesActorHaveTag(InActor, TagToCheck) ? EWarriorConfirmType::Yes : EWarriorConfirmType::No;
 }
@@ -68,7 +69,7 @@ bool UWarriorFunctionLibrary::IsTargetPawnHostile(APawn* QueryPawn, APawn* Targe
     IGenericTeamAgentInterface* QueryTeamAgent = Cast<IGenericTeamAgentInterface>(QueryPawn->GetController());
     IGenericTeamAgentInterface* TargetTeamAgent = Cast<IGenericTeamAgentInterface>(TargetPawn->GetController());
 
-    if (QueryTeamAgent && TargetTeamAgent) 
+    if (QueryTeamAgent && TargetTeamAgent)
     {
         return QueryTeamAgent->GetGenericTeamId() != TargetTeamAgent->GetGenericTeamId();
     }
@@ -78,4 +79,44 @@ bool UWarriorFunctionLibrary::IsTargetPawnHostile(APawn* QueryPawn, APawn* Targe
 float UWarriorFunctionLibrary::GetScalableFloatValueAtLevel(const FScalableFloat& InScalableFloat, float InLevel)
 {
     return InScalableFloat.GetValueAtLevel(InLevel);
+}
+
+FHitReactResult UWarriorFunctionLibrary::ComputeHitReactDirectionTag(AActor* InAttacker, AActor* InVictim)
+{
+    check(InAttacker && InVictim);
+
+    const FVector VictimForward = InVictim->GetActorForwardVector();
+    const FVector VictimToAttackerNormalized = (InAttacker->GetActorLocation() - InVictim->GetActorLocation()).GetSafeNormal();
+
+    const float DotResult = FVector::DotProduct(VictimForward, VictimToAttackerNormalized);
+    FHitReactResult HitReactResult;
+    HitReactResult.Angle = UKismetMathLibrary::DegAcos(DotResult);
+    const FVector CrossResult = FVector::CrossProduct(VictimForward, VictimToAttackerNormalized);
+    if (CrossResult.Z < 0.f)
+    {
+        HitReactResult.Angle *= -1.f;
+    }
+    if (HitReactResult.Angle >= -45.f && HitReactResult.Angle <= 45.f)
+    {
+        HitReactResult.Tag = WarriorGameplayTags::Shared_Status_HitReact_Front;
+        return HitReactResult;
+    }
+    else if (HitReactResult.Angle < -45.f && HitReactResult.Angle >= -135.f)
+    {
+        HitReactResult.Tag = WarriorGameplayTags::Shared_Status_HitReact_Left;
+        return HitReactResult;
+    }
+    else if (HitReactResult.Angle < -135.f || HitReactResult.Angle > 135.f)
+    {
+        HitReactResult.Tag = WarriorGameplayTags::Shared_Status_HitReact_Back;
+        return HitReactResult;
+    }
+    else if (HitReactResult.Angle > 45.f && HitReactResult.Angle <= 135.f)
+    {
+        HitReactResult.Tag = WarriorGameplayTags::Shared_Status_HitReact_Right;
+        return HitReactResult;
+    }
+
+    HitReactResult.Tag = WarriorGameplayTags::Shared_Status_HitReact_Front;
+    return HitReactResult;
 }

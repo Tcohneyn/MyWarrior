@@ -10,9 +10,11 @@
 local M = UnLua.Class()
 function M:K2_ActivateAbility()
     local world = self:GetWorld()
+        -- 模仿蓝图中，先延迟0.05秒等待输入捕获（对应字幕里 delay 在启动 Compute Roll Direction 之前）
     coroutine.resume(coroutine.create(function()
         UE.UKismetSystemLibrary.Delay(world, self.Duration)
         self:ComputeRollDirectionAndDistance()
+              -- 设置并播放翻滚的 Montage（Subtitle 中“Play Montage and Wait”节点）
         local PlayMontageTask = UE.UAbilityTask_PlayMontageAndWait.CreatePlayMontageAndWaitProxy(self, "PlayMontageTask",
             self.MontagetoPlay)
         PlayMontageTask.OnCompleted:Add(self, M.OnMontage)
@@ -24,6 +26,7 @@ function M:K2_ActivateAbility()
 end
 
 function M:OnMontage()
+    -- Montage 播放结束后结束 Ability（对应蓝图连接 EndAbility）
     self:K2_EndAbility()
 end
 
@@ -33,6 +36,7 @@ function M:ComputeRollDirectionAndDistance()
         UE.UKismetSystemLibrary.PrintString(self, "Character is invalid!")
         return
     end
+    -- 获取最后一次有效移动输入向量，并归一化
     local Vector = Character:GetLastMovementInputVector()
     self.CachedRollingDirection = UE.UKismetMathLibrary.Normal(Vector)
     self:RunSequence()
@@ -55,9 +59,6 @@ function M:RunSequence()
     end)
     Delay1:ReadyForActivation()
 end
-
--- 延迟函数（替代Delay节点）
-
 
 -- 示例任务函数
 function M:Task1()

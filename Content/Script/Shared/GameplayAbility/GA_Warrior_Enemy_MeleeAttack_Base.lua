@@ -55,14 +55,43 @@ function M:HandleApplyDamage(InPayload)
         UE.UKismetSystemLibrary.PrintString(self, "Target invalid!")
         return
     end
+    self.Targetactor = InPayload.Target
+    self.Payload = InPayload
     local GESpecHandle = self:BP_MakeEnemyDamageEffectSpecHandle(self.EffectClass, self.InDamageScalableFloat)
     if not GESpecHandle then
         UE.UKismetSystemLibrary.PrintString(self, "EffectSpec invalid!")
         return
     end
     self:BP_ApplyEffectSpecHandleToTarget(InPayload.Target, GESpecHandle)
+    self:RunSequence()
+end
+
+-- 顺序执行任务（模拟Sequence节点）
+function M:RunSequence()
+    -- 创建协程任务链
+    -- 延迟0.1秒后执行 Task1
+    local Delay1 = UE.UAbilityTask_WaitDelay.WaitDelay(self, 0.1)
+    Delay1.OnFinish:Add(self, function()
+        self:Task1()
+        -- 延迟0.2秒后执行 Task2
+        local Delay2 = UE.UAbilityTask_WaitDelay.WaitDelay(self, 0.1)
+        Delay2.OnFinish:Add(self, function()
+            self:Task2()
+        end)
+        Delay2:ReadyForActivation()
+    end)
+    Delay1:ReadyForActivation()
+end
+
+function M:Task1()
+    --UE.UKismetSystemLibrary.PrintString(self, "任务1执行")
     local Context = UE.FGameplayEffectContextHandle()
     self:K2_ExecuteGameplayCue(self.WeaponHitSoundGameplayCueTag,Context)
 end
 
+function M:Task2()
+    --UE.UKismetSystemLibrary.PrintString(self, "任务2执行")
+    UE.UAbilitySystemBlueprintLibrary.SendGameplayEventToActor(self.Targetactor, self.EventTag1,self.Payload)
+        
+end
 return M
