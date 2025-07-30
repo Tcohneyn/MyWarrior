@@ -62,6 +62,8 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "Light Attack")
     TMap<int, UAnimMontage*> AttackMontagesMap;
 
+    void BlockJumpToFinisher();
+
 private:
     UAbilityTask_PlayMontageAndWait* PlayMontageTask;
     float ComboCountResetTime = 0.3f;

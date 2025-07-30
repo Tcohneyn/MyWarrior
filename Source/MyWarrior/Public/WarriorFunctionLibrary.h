@@ -58,4 +58,7 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "Warrior|FunctionLibrary")
     static FHitReactResult ComputeHitReactDirectionTag(AActor* InAttacker, AActor* InVictim);
+
+    UFUNCTION(BlueprintPure, Category = "Warrior|FunctionLibrary")
+    static bool IsValidBlock(AActor* InAttacker,AActor* InDenfender);
 };

@@ -17,7 +17,7 @@ class MYWARRIOR_API UWarriorAbilitySystemComponent : public UAbilitySystemCompon
 
 public:
     void OnAbilityInputPressed(const FGameplayTag& InputTag);
-    void OnAbilityInputReleased(const FGameplayTag& InputTag);
+    void OnAbilityInputReleased(const FGameplayTag& InInputTag);
 
     UFUNCTION(BlueprintCallable, Category = "Warrior|Ability", meta = (ApplyLevel = "1"))
     void GrantHeroWeaponAbilities(const TArray<FWarriorHeroAbilitySet>& InDefaultWeaponAbilities, int32 ApplyLevel,

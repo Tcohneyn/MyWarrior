@@ -17,7 +17,7 @@ void UHero_LightAttackMaster::ActivateAbility(const FGameplayAbilitySpecHandle H
     const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
     GetWorld()->GetTimerManager().ClearTimer(ComboCountResetTimerHandle);
-
+    BlockJumpToFinisher();
     UsedComboCount = CurrentLightAttackComboCount;
 
     UAnimMontage* MontageToPlay = AttackMontagesMap.FindRef(CurrentLightAttackComboCount);
@@ -108,11 +108,19 @@ void UHero_LightAttackMaster::HandleApplyDamage(FGameplayEventData Payload)
     FGameplayEffectSpecHandle InSpecHandle =
         MakeHeroDamageEffectSpecHandle(EffectClass, InWeaponBaseDamage, InCurrentAttackTypeTag, UsedComboCount);
     AActor* LocalTargetActor = static_cast<AActor*>(Payload.Target);
-    //GameplayCue
+    // GameplayCue
     GetWarriorAbilitySystemComponentFromActorInfo()->ExecuteGameplayCue(WeaponHitSoundGameplayCueTag);
     FActiveGameplayEffectHandle ActiveGameplayEffectHandle = NativeApplyEffectSpecHandleToTarget(LocalTargetActor, InSpecHandle);
     if (ActiveGameplayEffectHandle.WasSuccessfullyApplied())
     {
         UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(LocalTargetActor, ToActorEventTag, Payload);
     }
+}
+
+void UHero_LightAttackMaster::BlockJumpToFinisher()
+{ 
+    if (UWarriorFunctionLibrary::NativeDoesActorHaveTag(GetHeroCharacterFromActorInfo(), JumpTag))
+        {
+            CurrentLightAttackComboCount = AttackMontagesMap.Num();
+        }
 }

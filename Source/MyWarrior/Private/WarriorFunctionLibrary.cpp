@@ -120,3 +120,16 @@ FHitReactResult UWarriorFunctionLibrary::ComputeHitReactDirectionTag(AActor* InA
     HitReactResult.Tag = WarriorGameplayTags::Shared_Status_HitReact_Front;
     return HitReactResult;
 }
+
+bool UWarriorFunctionLibrary::IsValidBlock(AActor* InAttacker, AActor* InDenfender)
+{
+    check(InAttacker && InDenfender);
+    const float DotResult = FVector::DotProduct(InAttacker->GetActorForwardVector(), InDenfender->GetActorForwardVector());
+
+    //const FString DebugString =
+    //    FString::Printf(TEXT("DotResult: %f %s"), DotResult, DotResult < -0.1f ? TEXT("Valid Block") : TEXT("Invalid Block"));
+
+    //Debug::Print(DebugString,DotResult<-0.1f? FColor::Green : FColor::Red);
+
+    return DotResult <-0.1f;
+}
