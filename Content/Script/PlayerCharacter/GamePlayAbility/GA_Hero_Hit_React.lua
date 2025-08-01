@@ -17,7 +17,7 @@ function M:K2_ActivateAbilityFromEvent(EventData)
     end
     local s = string.format("%.2f", HitResult.Angle)
     local tag = UE.UBlueprintGameplayTagLibrary.GetDebugStringFromGameplayTag(HitResult.Tag)
-    UE.UKismetSystemLibrary.PrintString(self, "AngleDiff" .. s .. " " .. tag)
+    --[[ UE.UKismetSystemLibrary.PrintString(self, "AngleDiff" .. s .. " " .. tag) ]]
     local MontagetoPlay = self.MontageMap:Find(HitResult.Tag)
     local PlayMontageTask = UE.UAbilityTask_PlayMontageAndWait.CreatePlayMontageAndWaitProxy(self, "PlayMontageTask",
         MontagetoPlay)
