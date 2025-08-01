@@ -13,7 +13,7 @@
 #include "Components/Input/WarriorEnhancedInputComponent.h"
 #include "Components/Combat/HeroCombatComponent.h"
 #include "Components/UI/HeroUIComponent.h"
-
+#include "AbilitySystemBlueprintLibrary.h"
 #include "WarriorDebugHelper.h"
 // 构造函数：AWarriorHeroCharacter的构造函数
 AWarriorHeroCharacter::AWarriorHeroCharacter()
@@ -128,6 +128,11 @@ void AWarriorHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
     WarriorInputComponent->BindNativeInputAction(
         InputConfigDataAsset, WarriorGameplayTags::InputTag_Look, ETriggerEvent::Triggered, this, &AWarriorHeroCharacter::Input_Look);
 
+    WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset, WarriorGameplayTags::InputTag_SwitchTarget, ETriggerEvent::Triggered,this, &AWarriorHeroCharacter::Input_SwitchTargetTriggered);
+
+    WarriorInputComponent->BindNativeInputAction(InputConfigDataAsset, WarriorGameplayTags::InputTag_SwitchTarget, ETriggerEvent::Triggered,
+        this, &AWarriorHeroCharacter::Input_SwitchTargetCompleted);
+
     // 绑定能力输入动作
     WarriorInputComponent->BindAbilityInputAction(InputConfigDataAsset,this,&ThisClass::Input_AbilityInputPressesd,&ThisClass::Input_AbilityInputReleased);
 }
@@ -174,6 +179,22 @@ void AWarriorHeroCharacter::Input_Look(const FInputActionValue& InputActionValue
     {
         AddControllerPitchInput(LookAxisVector.Y);
     }
+}
+
+void AWarriorHeroCharacter::Input_SwitchTargetTriggered(const FInputActionValue& InputActionValue) 
+{
+    SwitchDirection = InputActionValue.Get<FVector2D>();
+}
+
+void AWarriorHeroCharacter::Input_SwitchTargetCompleted(const FInputActionValue& InputActionValue) 
+{
+    FGameplayEventData Data;
+
+    UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this,
+        SwitchDirection.X > 0.f ? WarriorGameplayTags::Player_Event_SwitchTarget_Right
+                                : WarriorGameplayTags::Player_Event_SwitchTarget_Left,
+        Data);
+    //Debug::Print(TEXT("SwitchDirection")+SwitchDirection.ToString());
 }
 
 void AWarriorHeroCharacter::Input_AbilityInputPressesd(FGameplayTag InputTag) 

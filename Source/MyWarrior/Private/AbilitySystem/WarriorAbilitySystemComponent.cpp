@@ -1,10 +1,9 @@
 // Tcohneyn All Rights Reserved
 
-
 #include "AbilitySystem/WarriorAbilitySystemComponent.h"
 #include "AbilitySystem/Abilities/WarriorHeroGameplayAbility.h"
 #include "WarriorGameplayTags.h"
-void UWarriorAbilitySystemComponent::OnAbilityInputPressed(const FGameplayTag& InputTag) 
+void UWarriorAbilitySystemComponent::OnAbilityInputPressed(const FGameplayTag& InputTag)
 {
     if (!InputTag.IsValid())
     {
@@ -13,7 +12,21 @@ void UWarriorAbilitySystemComponent::OnAbilityInputPressed(const FGameplayTag& I
     for (const FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
     {
         if (!AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag)) continue;
-        TryActivateAbility(AbilitySpec.Handle);
+        if (InputTag.MatchesTag(WarriorGameplayTags::InputTag_Toggleable))
+        {
+            if (AbilitySpec.IsActive())
+            {
+                CancelAbilityHandle(AbilitySpec.Handle);
+            }
+            else
+            {
+                TryActivateAbility(AbilitySpec.Handle);
+            }
+        }
+        else
+        {
+            TryActivateAbility(AbilitySpec.Handle);
+        }
     }
 }
 
@@ -70,7 +83,7 @@ void UWarriorAbilitySystemComponent::RemovedGrantedHeroWeaponAbilities(
 
 bool UWarriorAbilitySystemComponent::TryActivateAbilityByTag(FGameplayTag AbilityTagToActivate)
 {
-    check(AbilityTagToActivate.IsValid()); 
+    check(AbilityTagToActivate.IsValid());
     TArray<FGameplayAbilitySpec*> FoundAbilitySpecs;
     GetActivatableGameplayAbilitySpecsByAllMatchingTags(AbilityTagToActivate.GetSingleTagContainer(), FoundAbilitySpecs);
     if (!FoundAbilitySpecs.IsEmpty())
