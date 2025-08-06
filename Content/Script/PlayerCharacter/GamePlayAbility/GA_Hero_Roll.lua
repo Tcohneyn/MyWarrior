@@ -71,7 +71,7 @@ end
 
 function M:Task2()
     local Character = self:GetHeroCharacterFromActorInfo()
-    UE.UKismetSystemLibrary.PrintString(self, "任务2执行")
+    --UE.UKismetSystemLibrary.PrintString(self, "任务2执行")
     local vec = Character:K2_GetActorLocation()
     local levelfloat = UE.UWarriorFunctionLibrary.GetScalableFloatValueAtLevel(self.RollingDistanceScalableFloat,self:GetAbilityLevel())
     local startvec = vec + self.CachedRollingDirection * levelfloat
@@ -82,11 +82,16 @@ function M:Task2()
     UE.UKismetSystemLibrary.LineTraceSingleForObjects(self, startvec, endvec, self.ObjectTypes, false, IgnoreActors,
         self.DrawDebugType, HitResult, true)
     local MotionWarpingComp = Character.MotionWarpingComponent
-    MotionWarpingComp:AddOrUpdateWarpTargetFromLocation(self.WarpTargetName1, HitResult.ImpactPoint)
+    if HitResult.bBlockingHit then
+         MotionWarpingComp:AddOrUpdateWarpTargetFromLocation(self.WarpTargetName1, HitResult.ImpactPoint)
+    else
+         --UE.UKismetSystemLibrary.PrintString(self, "No")
+         MotionWarpingComp:RemoveWarpTarget(self.WarpTargetName1)
+    end
 end
 
 function M:Task3()
-    UE.UKismetSystemLibrary.PrintString(self, "任务3执行")
+   --[[  UE.UKismetSystemLibrary.PrintString(self, "任务3执行") ]]
 end
 
 return M
