@@ -13,7 +13,7 @@ function BTTask_EnemyBase_C:ReceiveExecuteAI(OwnerController, ControlledPawn)
     -- 把蓝图的 Event Receive Execute AI 对应到 Lua 的 ReceiveExecuteAI
     if not (self.OwningEnemyCharacter and self.OwningEnemyCharacter:IsValid()) then
         -- 蓝图中 IsValid 检查失败后直接 Finish Execute (失败)
-        UE.UKismetSystemLibrary.PrintString(self, "Error: OwningEnemyCharacter is not valid.")
+        --UE.UKismetSystemLibrary.PrintString(self, "Error: OwningEnemyCharacter is not valid.")
         local EnemyChar = ControlledPawn:Cast(UE.AWarriorEnemyCharacter)
         if not EnemyChar then
             -- cast 失败，Finish Execute (失败)

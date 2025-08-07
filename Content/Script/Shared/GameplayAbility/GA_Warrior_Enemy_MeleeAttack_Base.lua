@@ -9,6 +9,20 @@
 ---@type GA_Warrior_Enemy_MeleeAttack_Base_C
 local M = UnLua.Class()
 function M:K2_ActivateAbility()
+    local Enemy = self:GetEnemyCharacterFromActorInfo()
+    local bHaveTag = UE.UWarriorFunctionLibrary.NativeDoesActorHaveTag(Enemy, self.TagtoCheck)
+    if(bHaveTag) then
+        if not self.GameplayCueTag then
+            UE.UKismetSystemLibrary.PrintString(self, "[Error] Invalid GameplayCueTag!")
+            return
+        end
+        self:K2_ExecuteGameplayCue(self.GameplayCueTag,nil)
+        local world = self:GetWorld()
+        coroutine.resume(coroutine.create(function()
+        -- 关键！使用Unreal原生延迟函数（Latent Function）
+        UE.UKismetSystemLibrary.Delay(world, 0.2)
+    end))
+    end
     local PlayMontageTask = UE.UAbilityTask_PlayMontageAndWait.CreatePlayMontageAndWaitProxy(self, "PlayMontageTask",
         self.MontagetoPlay)
     PlayMontageTask.OnCompleted:Add(self, M.OnMontage)

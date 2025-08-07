@@ -19,7 +19,9 @@ void UEnemyCombatComponent::OnHitTargetActor(AActor* HitActor)
     bool IsValidBlock = false;
 
     const bool IsPlayerBlocking = UWarriorFunctionLibrary::NativeDoesActorHaveTag(HitActor,WarriorGameplayTags::Player_Status_Blocking);
-    const bool bIsMyAttackUnblockable = false;
+    //const bool bIsMyAttackUnblockable = false;
+    const bool bIsMyAttackUnblockable =
+        UWarriorFunctionLibrary::NativeDoesActorHaveTag(GetOwningPawn(), WarriorGameplayTags::Enemy_Status_Unbloackable);
 
     if (IsPlayerBlocking && !bIsMyAttackUnblockable)
     {  //TODO:检查格挡是否有效

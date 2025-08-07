@@ -22,7 +22,6 @@ class UWarriorAbilitySystemComponent;
 class UPawnCombatComponent;
 struct FScalableFloat;
 
-
 UCLASS()
 class MYWARRIOR_API UWarriorFunctionLibrary : public UBlueprintFunctionLibrary
 {
@@ -60,5 +59,9 @@ public:
     static FHitReactResult ComputeHitReactDirectionTag(AActor* InAttacker, AActor* InVictim);
 
     UFUNCTION(BlueprintPure, Category = "Warrior|FunctionLibrary")
-    static bool IsValidBlock(AActor* InAttacker,AActor* InDenfender);
+    static bool IsValidBlock(AActor* InAttacker, AActor* InDenfender);
+
+    UFUNCTION(BlueprintCallable, Category = "Warrior|FunctionLibrary")
+    static bool ApplyGameplayEffectSpecHandleToTargetActor(
+        AActor* InInstigator, AActor* InTargetActor, const FGameplayEffectSpecHandle& InSpecHandle);
 };

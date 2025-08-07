@@ -17,7 +17,7 @@ function M:PerformConditionCheckAI(OwnerController, ControlledPawn)
 
     local ActorToCheck = self.CachedTargetActor
     if not (ActorToCheck and ActorToCheck:IsValid()) then
-        UE.UKismetSystemLibrary.PrintString(self, "Error: ActorToCheck invalid")
+        --UE.UKismetSystemLibrary.PrintString(self, "Error: ActorToCheck invalid")
         return false
     end
 
