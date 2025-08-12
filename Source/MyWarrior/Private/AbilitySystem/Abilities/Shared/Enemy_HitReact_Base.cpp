@@ -2,6 +2,7 @@
 
 #include "AbilitySystem/Abilities/Shared/Enemy_HitReact_Base.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
+#include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Engine/LatentActionManager.h"
@@ -24,6 +25,8 @@ void UEnemy_HitReact_Base::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 
     auto Task2 = [this]
     {
+        // 所有分支均立即设置材质参数为1（激活受击效果）
+        GetOwningComponentFromActorInfo()->SetScalarParameterValueOnMaterials(FName("HitFxSwitch"), 1.f);
         if (HasHitReactMontageToPlay)
         {
             UAnimMontage* MontageToPlay = ShuffleMontage();
@@ -34,15 +37,19 @@ void UEnemy_HitReact_Base::ActivateAbility(const FGameplayAbilitySpecHandle Hand
             PlayMontageTask->OnCancelled.AddDynamic(this, &ThisClass::OnMontage);
             // 激活事件任务
             PlayMontageTask->ReadyForActivation();
-            GetOwningComponentFromActorInfo()->SetScalarParameterValueOnMaterials(FName("HitFxSwitch"), 1.f);
+            //GetOwningComponentFromActorInfo()->SetScalarParameterValueOnMaterials(FName("HitFxSwitch"), 1.f);
         }
         else
         {
-            FLatentActionInfo LatentInfo;
-            LatentInfo.CallbackTarget = this;
-            LatentInfo.ExecutionFunction = FName("EndAbility");
-            GetOwningComponentFromActorInfo()->SetScalarParameterValueOnMaterials(FName("HitFxSwitch"), 1.f);
-            UKismetSystemLibrary::Delay(GetWorld(), 0.2f, LatentInfo);
+            //FLatentActionInfo LatentInfo;
+            //LatentInfo.CallbackTarget = this;
+            //LatentInfo.ExecutionFunction = FName("EndAbility");
+            //GetOwningComponentFromActorInfo()->SetScalarParameterValueOnMaterials(FName("HitFxSwitch"), 1.f);
+            //UKismetSystemLibrary::Delay(GetWorld(), 0.2f, LatentInfo);
+            //  使用 AbilityTask 安全延迟
+            DelayTask = UAbilityTask_WaitDelay::WaitDelay(this, 0.2f);
+            DelayTask->OnFinish.AddDynamic(this, &ThisClass::OnDelayFinished);
+            DelayTask->ReadyForActivation();
         }
     };
 
@@ -55,6 +62,14 @@ void UEnemy_HitReact_Base::ActivateAbility(const FGameplayAbilitySpecHandle Hand
     Task1();
     Task2();
     Task3();
+}
+
+void UEnemy_HitReact_Base::OnDelayFinished()
+{
+    if (IsActive())
+    {
+        EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+    }
 }
 
 void UEnemy_HitReact_Base::OnMontage()
@@ -72,6 +87,16 @@ UAnimMontage* UEnemy_HitReact_Base::ShuffleMontage()
 void UEnemy_HitReact_Base::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
     const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
+    // 仅活跃状态下重置材质
+    if (IsActive())
+    {
+        GetOwningComponentFromActorInfo()->SetScalarParameterValueOnMaterials(FName("HitFxSwitch"), 0.f);
+    }
+    // 清理延迟任务
+    if (DelayTask)
+    {
+        DelayTask->EndTask();
+        DelayTask = nullptr;
+    }
     Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
-    GetOwningComponentFromActorInfo()->SetScalarParameterValueOnMaterials(FName("HitFxSwitch"), 0.f);
 }

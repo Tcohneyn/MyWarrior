@@ -53,6 +53,12 @@ public:
     FGameplayAttributeData DamageTaken;
     ATTRIBUTE_ACCESSORS(UWarriorAttributeSet, DamageTaken)
 
+    UFUNCTION(BlueprintCallable, Category = "Attributes")
+    static FGameplayAttribute MakeCurrentHealthAttribute() { return UWarriorAttributeSet::GetCurrentHealthAttribute(); }
+
+    UFUNCTION(BlueprintCallable, Category = "Attributes")
+    static FGameplayAttribute MakeMaxHealthAttribute() { return UWarriorAttributeSet::GetMaxHealthAttribute(); }
+
 private:
     TWeakInterfacePtr<IPawnUIInterface> CachedPawnUIInterface;
 };

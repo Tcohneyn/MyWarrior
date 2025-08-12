@@ -8,6 +8,7 @@
 
 class UAnimMontage;
 class UAbilityTask_PlayMontageAndWait;
+class UAbilityTask_WaitDelay;
 
 UCLASS()
 class MYWARRIOR_API UEnemy_HitReact_Base : public UWarriorEnemyGameplayAbility
@@ -38,7 +39,13 @@ protected:
         const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
 private:
+    UPROPERTY()
+    UAbilityTask_WaitDelay* DelayTask;
+
     UAbilityTask_PlayMontageAndWait* PlayMontageTask;
 
     UAnimMontage* ShuffleMontage();
+
+    UFUNCTION()
+    void OnDelayFinished();
 };

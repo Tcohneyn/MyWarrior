@@ -9,6 +9,10 @@
 ---@type WBP_DefaultEnemyHealthBar_C
 local  WBP_DefaultEnemyHealthBar = UnLua.Class()
 
+function WBP_DefaultEnemyHealthBar:Construct()
+   self:SetVisibility(UE.ESlateVisibility.Hidden)
+end
+
 function WBP_DefaultEnemyHealthBar:BP_OnOwningEnemyUIComponentInitialized(OwningEnemyUIComponent)
     -- This function is called when the owning Hero UI component is initialized.
     -- You can add your initialization logic here.

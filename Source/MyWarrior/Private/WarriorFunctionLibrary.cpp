@@ -10,8 +10,17 @@
 #include "WarriorGameplayTags.h"
 UWarriorAbilitySystemComponent* UWarriorFunctionLibrary::NativeGetWarriorASCFromActor(AActor* InActor)
 {
+    if (!IsValid(InActor))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("NativeGetWarriorASCFromActor: InActor is null or invalid"));
+        return nullptr;
+    }
     check(InActor);
-
+    //if (!IsValid(InActor))
+    //{
+    //    UE_LOG(LogTemp, Warning, TEXT("NativeGetWarriorASCFromActor: InActor is null or invalid"));
+    //    return nullptr;
+    //}
     return CastChecked<UWarriorAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(InActor));
 }
 
@@ -37,6 +46,10 @@ bool UWarriorFunctionLibrary::NativeDoesActorHaveTag(AActor* InActor, FGameplayT
 {
     UWarriorAbilitySystemComponent* ASC = NativeGetWarriorASCFromActor(InActor);
     // Debug::Print(ASC->HasMatchingGameplayTag(TagToCheck) ? TEXT("true") : TEXT("false"));
+    if (!ASC)
+    {
+        return false;
+    }
     return ASC->HasMatchingGameplayTag(TagToCheck);
 }
 

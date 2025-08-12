@@ -14,6 +14,7 @@ class UTimelineComponent;
 class UNiagaraSystem;
 class UEnemyUIComponent;
 class UWidgetComponent;
+class UBoxComponent;
 
 UCLASS()
 class MYWARRIOR_API AWarriorEnemyCharacter : public AWarriorBaseCharacter, public IEnemy_Death_Interface
@@ -41,11 +42,28 @@ protected:
 
     virtual void BeginPlay() override;
 
+#if WITH_EDITOR
+    //~ Begin UObject Interface.
+    virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent);
+    //~ End UObject Interface
+#endif
     UPROPERTY(EditDefaultsOnly, Category = "Dissolve")
     FName ParameterName;
 
-    UPROPERTY(VisibleAnywhere, Category = "Combat")
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
     TObjectPtr<UEnemyCombatComponent> EnemyCombatComponent;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
+    UBoxComponent* LeftHandCollisionBox;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
+    FName LeftHandCollisionBoxAttachBoneName;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
+    UBoxComponent* RightHandCollisionBox;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
+    FName RightHandCollisionBoxAttachBoneName;
 
     UPROPERTY(VisibleAnywhere, Category = "UI")
     TObjectPtr<UEnemyUIComponent> EnemyUIComponent;
@@ -53,12 +71,18 @@ protected:
     UPROPERTY(VisibleAnywhere, Category = "UI")
     TObjectPtr<UWidgetComponent> EnemyHealthWidgetComponent;
 
+    UFUNCTION()
+    virtual void OnBodyCollisionBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+        UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
     FStreamableManager StreamableManager;
 
 #pragma region DissolveCurve
 
     // 委托声明
     FOnTimelineFloat OnDissolveTimelineUpdate;
+    UPROPERTY()
+    FOnTimelineFloat OnReverseTimelineUpdate;
     FOnTimelineEvent OnDissolveTimelineFinished;
     //FStreamableDelegate Delegate;
 
@@ -77,8 +101,12 @@ protected:
     // 绑定函数
     UFUNCTION()
     void OnDissolveUpdate(float Value);
+    //void OnReverseUpdate(float Value);
     UFUNCTION()
     void OnDissolveFinished();
+
+    UFUNCTION(BlueprintCallable)
+    void BindReverseTimelineUpdate(UTimelineComponent* Timelines);
 
     void SetDissolveTimeline();
     void LoadNiagaraAsync(TSoftObjectPtr<UNiagaraSystem> Dissolve_Niagara_System);
@@ -91,4 +119,6 @@ private:
 
 public:
     FORCEINLINE UEnemyCombatComponent* GetEnemyCombatComponent() const { return EnemyCombatComponent; }
+    FORCEINLINE UBoxComponent* GetLeftHandCollisionBox() const { return LeftHandCollisionBox; }
+    FORCEINLINE UBoxComponent* GetRightHandCollisionBox() const { return RightHandCollisionBox; }
 };

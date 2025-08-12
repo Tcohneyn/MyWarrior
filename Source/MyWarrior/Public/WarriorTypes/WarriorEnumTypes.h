@@ -20,3 +20,13 @@ enum class EWarriorSuccessType : uint8
     Successful,
     Failed
 };
+
+UENUM()
+enum class EWarriorDecoratorOperaty : uint8
+{
+    IsLessThan,
+    IsLessThanOrEqualTo,
+    IsEqualTo,
+    IsGreaterThanOrEqualTo,
+    IsGreaterThan
+};

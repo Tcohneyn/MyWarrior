@@ -11,8 +11,8 @@ local M = UnLua.Class()
 local Screen = require "Widgets.Screen"
 function M:ReceiveTickAI(_OwnerController,ControlledPawn,DeltaSeconds)
     local OtherActor = UE.UBTFunctionLibrary.GetBlackboardValueAsObject(self, self.InTargetActorKey)
-        if not OtherActor then
-        Screen.Print("ERROR: Target actor is nil, check your blackboard key.")
+    if not OtherActor then
+        --Screen.Print("ERROR: Target actor is nil, check your blackboard key.")
         return
     end
     local Distance = ControlledPawn:GetDistanceTo( OtherActor)

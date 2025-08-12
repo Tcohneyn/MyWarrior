@@ -19,7 +19,8 @@ public class MyWarrior : ModuleRules
 			"GameplayTags",//
 			"GameplayTasks",//
 			"Niagara",//
-			"AnimGraphRuntime",
+			"NavigationSystem",//
+            "AnimGraphRuntime",
             "MotionWarping",
             "UnLua",
             "Lua",

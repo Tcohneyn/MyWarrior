@@ -16,7 +16,12 @@ function M:K2_ActivateAbility()
             UE.UKismetSystemLibrary.PrintString(self, "[Error] Invalid GameplayCueTag!")
             return
         end
-        self:K2_ExecuteGameplayCue(self.GameplayCueTag,nil)
+        -- 创建 FGameplayCueParameters 实例
+        local CueParameters = UE.FGameplayCueParameters()
+
+        -- 设置 RawMagnitude（需浮点数）
+        CueParameters.RawMagnitude = self.UnblockableAttackWarningSpawnOffset 
+        self:K2_ExecuteGameplayCueWithParams(self.GameplayCueTag,CueParameters)
         local world = self:GetWorld()
         coroutine.resume(coroutine.create(function()
         -- 关键！使用Unreal原生延迟函数（Latent Function）
