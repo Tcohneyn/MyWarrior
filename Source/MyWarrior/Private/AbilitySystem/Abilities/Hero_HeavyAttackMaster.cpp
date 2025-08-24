@@ -78,14 +78,23 @@ void UHero_HeavyAttackMaster::RunSequenceTasks()
             CurrentHeavyAttackComboCount++;
         }
     };
+    auto Task3 = [this]
+    {
+        AWarriorHeroCharacter* Hero = GetHeroCharacterFromActorInfo();
+        if(UWarriorFunctionLibrary::NativeDoesActorHaveTag(Hero,WarriorGameplayTags::Player_Status_Rage_Active))
+        {
+            WhileRageActive();
+        }
+    };
     // 使用ParallelFor并行执行
-    ParallelFor(2,
+    ParallelFor(3,
         [&](int32 Index)
         {
             switch (Index)
             {
                 case 0: Task1(); break;
                 case 1: Task2(); break;
+                case 2: Task3(); break;    
             }
         });
 }
@@ -111,5 +120,6 @@ void UHero_HeavyAttackMaster::HandleApplyDamage(FGameplayEventData Payload)
     if (ActiveGameplayEffectHandle.WasSuccessfullyApplied())
     {
         UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(LocalTargetActor, ToActorEventTag, Payload);
+        BP_ApplyGameplayEffectToOwner(GainRageEffectClass,GetAbilityLevel(),1);
     }
 }

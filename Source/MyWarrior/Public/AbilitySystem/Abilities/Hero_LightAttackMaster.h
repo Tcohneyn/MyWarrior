@@ -10,6 +10,8 @@ class UAnimMontage;
 class UAbilityTask_PlayMontageAndWait;
 class UAbilityTask_WaitGameplayEvent;
 
+
+
 UCLASS()
 class MYWARRIOR_API UHero_LightAttackMaster : public UWarriorHeroGameplayAbility
 {
@@ -35,6 +37,12 @@ public:
 
     UPROPERTY(EditDefaultsOnly, Category = "GameplayEffect")
     TSubclassOf<UGameplayEffect> EffectClass;
+    
+    UPROPERTY(EditDefaultsOnly, Category = "GameplayEffect")
+    TSubclassOf<UGameplayEffect> GainRageEffectClass;
+
+    UFUNCTION(BlueprintImplementableEvent)
+    void WhileRageActive();
 
 protected:
     UPROPERTY()
@@ -57,6 +65,7 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "Light Attack")
     int CurrentLightAttackComboCount = 1;
 
+    UPROPERTY(BlueprintReadWrite)
     int UsedComboCount;
 
     UPROPERTY(EditDefaultsOnly, Category = "Light Attack")

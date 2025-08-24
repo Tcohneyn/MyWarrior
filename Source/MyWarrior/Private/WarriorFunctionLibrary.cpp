@@ -26,10 +26,13 @@ UWarriorAbilitySystemComponent* UWarriorFunctionLibrary::NativeGetWarriorASCFrom
 
 void UWarriorFunctionLibrary::AddGameplayTagToActorIfNone(AActor* InActor, FGameplayTag TagToAdd)
 {
+    // 从传入的 Actor 上获取自定义的 AbilitySystemComponent
     UWarriorAbilitySystemComponent* ASC = NativeGetWarriorASCFromActor(InActor);
     if (!ASC->HasMatchingGameplayTag(TagToAdd))
     {
+        // 就给它添加一个 Loose GameplayTag
         ASC->AddLooseGameplayTag(TagToAdd);
+        //Loose GameplayTag 不依赖于 GameplayEffect，它只是单纯存在于 ASC 上，可以用来当作状态标记或条件检查
     }
 }
 
@@ -37,7 +40,7 @@ void UWarriorFunctionLibrary::RemoveGameplayTagFromActor(AActor* InActor, FGamep
 {
     UWarriorAbilitySystemComponent* ASC = NativeGetWarriorASCFromActor(InActor);
     if (ASC->HasMatchingGameplayTag(TagToRemove))
-    {
+    {   // 就移除掉它（仅 Loose Tag）
         ASC->RemoveLooseGameplayTag(TagToRemove);
     }
 }

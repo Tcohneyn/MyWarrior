@@ -34,6 +34,12 @@ public:
 
     UPROPERTY(EditDefaultsOnly, Category = "GameplayEffect")
     TSubclassOf<UGameplayEffect> EffectClass;
+    
+    UPROPERTY(EditDefaultsOnly, Category = "GameplayEffect")
+    TSubclassOf<UGameplayEffect> GainRageEffectClass;
+    
+    UFUNCTION(BlueprintImplementableEvent)
+    void WhileRageActive();
 
 protected:
     UPROPERTY()
@@ -56,6 +62,7 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "Heavy Attack")
     int CurrentHeavyAttackComboCount = 1;
 
+    UPROPERTY(BlueprintReadWrite)
     int UsedComboCount;
 
     UPROPERTY(EditDefaultsOnly, Category = "Heavy Attack")

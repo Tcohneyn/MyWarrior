@@ -83,28 +83,29 @@ void AWarriorProjectileBase::OnProjectileHit(
 
     Destroy();
 }
-
+//当投射物的碰撞体和其它物体发生重叠时，碰撞回调
 void AWarriorProjectileBase::OnProjectileBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-    //if (OverlappedActors.Contains(OtherActor))
-    //{
-    //    return;
-    //}
+    //防止重复命中
+    if (OverlappedActors.Contains(OtherActor))
+    {
+        return;
+    }
 
-    //OverlappedActors.AddUnique(OtherActor);
-
-    //if (APawn* HitPawn = Cast<APawn>(OtherActor))
-    //{
-    //    FGameplayEventData Data;
-    //    Data.Instigator = GetInstigator();
-    //    Data.Target = HitPawn;
-
-    //    if (UWarriorFunctionLibrary::IsTargetPawnHostile(GetInstigator(), HitPawn))
-    //    {
-    //        HandleApplyProjectileDamage(HitPawn, Data);
-    //    }
-    //}
+    OverlappedActors.AddUnique(OtherActor);
+    //判断是否是角色
+    if (APawn* HitPawn = Cast<APawn>(OtherActor))
+    {
+        FGameplayEventData Data;
+        Data.Instigator = GetInstigator();
+        Data.Target = HitPawn;
+    //判断敌我关系并应用伤害
+        if (UWarriorFunctionLibrary::IsTargetPawnHostile(GetInstigator(), HitPawn))
+        {
+            HandleApplyProjectileDamage(HitPawn, Data);
+        }
+    }
 }
 
 

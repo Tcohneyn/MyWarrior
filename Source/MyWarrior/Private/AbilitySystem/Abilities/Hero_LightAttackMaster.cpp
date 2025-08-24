@@ -53,6 +53,7 @@ void UHero_LightAttackMaster::ResetAttackComboCount()
 }
 void UHero_LightAttackMaster::RunSequenceTasks()
 {
+    //施加近战伤害
     auto Task1 = [this]
     {
         WaitEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, EventTag);
@@ -61,7 +62,7 @@ void UHero_LightAttackMaster::RunSequenceTasks()
 
         WaitEventTask->ReadyForActivation();
     };
-
+    //处理连击计数
     auto Task2 = [this]
     {
         if (CurrentLightAttackComboCount == AttackMontagesMap.Num())
@@ -82,14 +83,23 @@ void UHero_LightAttackMaster::RunSequenceTasks()
             }
         }
     };
+    auto Task3 = [this]
+    {
+        AWarriorHeroCharacter* Hero = GetHeroCharacterFromActorInfo();
+        if(UWarriorFunctionLibrary::NativeDoesActorHaveTag(Hero,WarriorGameplayTags::Player_Status_Rage_Active))
+        {
+            WhileRageActive();
+        }
+    };
     // 使用ParallelFor并行执行
-    ParallelFor(2,
+    ParallelFor(3,
         [&](int32 Index)
         {
             switch (Index)
             {
                 case 0: Task1(); break;
                 case 1: Task2(); break;
+                case 2: Task3(); break;
             }
         });
 }
@@ -114,6 +124,7 @@ void UHero_LightAttackMaster::HandleApplyDamage(FGameplayEventData Payload)
     if (ActiveGameplayEffectHandle.WasSuccessfullyApplied())
     {
         UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(LocalTargetActor, ToActorEventTag, Payload);
+        BP_ApplyGameplayEffectToOwner(GainRageEffectClass,GetAbilityLevel(),1); 
     }
 }
 
