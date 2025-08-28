@@ -7,6 +7,11 @@
 #include "WarriorTypes/WarriorEnumTypes.h"
 #include "WarriorGameplayAbility.generated.h"
 
+namespace EDrawDebugTrace
+{
+enum Type : int;
+}
+
 class UPawnCombatComponent;
 class WarriorAbilitySystemComponent;
 
@@ -44,4 +49,10 @@ protected:
 
     UFUNCTION(BlueprintCallable, Category = "Warrior|Ability", meta = (DisplayName = "Apply Gameplay Effect Spec Handle To Target Actor", ExpandEnumAsExecs = "OutSuccessType"))
     FActiveGameplayEffectHandle BP_ApplyEffectSpecHandleToTarget(AActor* TargetActor, const FGameplayEffectSpecHandle& InSpecHandle,EWarriorSuccessType& OutSuccessType);
+    //把某个 GameplayEffect（比如伤害、减益 Buff）应用到一组命中的目标身上，并在成功时触发 HitReact 事件
+    UFUNCTION(BlueprintCallable, Category = "Warrior|Ability")
+    void ApplyGameplayEffectSpecHandleToHitResults(const FGameplayEffectSpecHandle& InSpecHandle,const TArray<FHitResult>& InHitResults);
+
+    UFUNCTION(BlueprintCallable, Category = "Warrior|Ability")
+    TArray<FHitResult> NativeBoxTraceMultiForObjects(const UObject* WorldContextObject, const FVector Start, const FVector End, const FVector HalfSize, const FRotator Orientation, const TArray<TEnumAsByte<EObjectTypeQuery> > & ObjectTypes, bool bTraceComplex, const TArray<AActor*>& ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, bool bIgnoreSelf);
 };

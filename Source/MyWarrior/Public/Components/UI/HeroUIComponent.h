@@ -4,9 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Components/UI/PawnUIComponent.h"
+#include "GameplayTagContainer.h"
+#include "WarriorFunctionLibrary.h"
 #include "HeroUIComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEquippedWeaponChanged, TSoftObjectPtr<UTexture2D>,SoftWeaponIcon);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAbilityIconSlotUpdatedDelegate,FGameplayTag,AbilityInputTag,TSoftObjectPtr<UMaterialInterface>,SoftAbilityIconMaterial);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnAbilityCooldownBeginDelegate,FGameplayTag,AbilityInputTag,float,TotalCooldownTime,float,RemainingCooldownTime);
 
 UCLASS()
 class MYWARRIOR_API UHeroUIComponent : public UPawnUIComponent
@@ -18,4 +22,13 @@ public:
 
     UPROPERTY(BlueprintCallable, BlueprintAssignable)
     FOnEquippedWeaponChanged OnEquippedWeaponChanged;
+
+    UPROPERTY(BlueprintCallable,BlueprintAssignable)
+    FOnAbilityIconSlotUpdatedDelegate OnAbilityIconSlotUpdated;
+
+    UPROPERTY(BlueprintCallable,BlueprintAssignable)
+    FOnAbilityCooldownBeginDelegate OnAbilityCooldownBegin;
+    
+    UPROPERTY()
+    FLuaOnAssetLoaded OnChanged;
 };

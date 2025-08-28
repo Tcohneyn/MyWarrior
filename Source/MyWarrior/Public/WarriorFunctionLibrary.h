@@ -3,10 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayEffectTypes.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "WarriorTypes/WarriorEnumTypes.h"
 #include "WarriorGameplayTags.h"
 #include "WarriorFunctionLibrary.generated.h"
+
+DECLARE_DYNAMIC_DELEGATE_OneParam(FLuaOnAssetLoaded, UObject*, Loaded);
 
 USTRUCT(BlueprintType)
 struct FHitReactResult
@@ -64,4 +67,14 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Warrior|FunctionLibrary")
     static bool ApplyGameplayEffectSpecHandleToTargetActor(
         AActor* InInstigator, AActor* InTargetActor, const FGameplayEffectSpecHandle& InSpecHandle);
+        
+    UFUNCTION(BlueprintCallable, Category = "Warrior|FunctionLibrary", meta = (Latent, WorldContext = "WorldContextObject", LatentInfo = "LatentInfo", ExpandEnumAsExecs = "CountDownInput|CountDownOutput",TotalTime = "1.0",UpdateInterval = "0.1"))
+    static void CountDown(const UObject* WorldContextObject,float TotalTime,float UpdateInterval,
+    	float& OutRemainingTime,EWarriorCountDownActionInput CountDownInput,
+    	UPARAM(DisplayName = "Output") EWarriorCountDownActionOutput & CountDownOutput, FLatentActionInfo LatentInfo);
+
+    /** 异步加载资源，Lua 直接调用 */
+    UFUNCTION(BlueprintCallable, Category="Lua|Asset",meta = (WorldContext = "WorldContextObject"))
+    static void AsyncLoadAsset(const UObject* WorldContextObject, TSoftObjectPtr<UObject> Asset,  FLuaOnAssetLoaded OnLoaded);
+    
 };

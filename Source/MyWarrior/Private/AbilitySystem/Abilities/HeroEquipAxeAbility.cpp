@@ -85,13 +85,23 @@ void UHeroEquipAxeAbility::RunSequenceTasks()
         UWarriorAbilitySystemComponent* ASC = GetWarriorAbilitySystemComponentFromActorInfo();
         check(ASC);
         if (!ASC) return;
-        ASC->GrantHeroWeaponAbilities(CacheHeroWeaponData.DefaultWeaponAbilities, GetAbilityLevel(), NewWeaponHandles);
+        ASC->GrantHeroWeaponAbilities(CacheHeroWeaponData.DefaultWeaponAbilities,CacheHeroWeaponData.SpecialWeaponAbilities,GetAbilityLevel(), NewWeaponHandles);
         CurrentHeroWeapon->AssignGrantedAbilitySpecHandles(NewWeaponHandles);
         };
+        //当武器装备时，更新 UI（武器图标 & 技能图标 & 技能冷却状态）
     auto Task4 = [this] { 
         AWarriorHeroCharacter* Hero = GetHeroCharacterFromActorInfo();
         UHeroUIComponent* HeroUI = Hero->GetHeroUIComponent();
         HeroUI->OnEquippedWeaponChanged.Broadcast(CacheHeroWeaponData.SoftWeaponIconTexture);
+        for(const FWarriorHeroSpecialAbilitySet& SpecialWeaponAbilities : CacheHeroWeaponData.SpecialWeaponAbilities)
+        {
+            HeroUI->OnAbilityIconSlotUpdated.Broadcast(SpecialWeaponAbilities.InputTag,SpecialWeaponAbilities.SoftAbilityIconMaterial);
+            FAbilityRemainingCooldownByTag Result=GetAbilityRemainingCooldownByTag(SpecialWeaponAbilities.AbilityCooldownTag);
+            if (Result.bIsOnCooldown)
+            {
+                HeroUI->OnAbilityCooldownBegin.Broadcast(SpecialWeaponAbilities.InputTag,Result.TotalCooldownTime,Result.RemainingCooldownTime);
+            }
+        }
         };
 
     // 使用ParallelFor并行执行

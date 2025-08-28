@@ -106,6 +106,10 @@ void UHeroUnequipAxeAbility::RunSequenceTasks()
         AWarriorHeroCharacter* Hero = GetHeroCharacterFromActorInfo();
         UHeroUIComponent* HeroUI = Hero->GetHeroUIComponent();
         HeroUI->OnEquippedWeaponChanged.Broadcast(nullptr);
+        for(const FWarriorHeroSpecialAbilitySet& SpecialWeaponAbilities : CacheHeroWeaponData.SpecialWeaponAbilities)
+        {
+            HeroUI->OnAbilityIconSlotUpdated.Broadcast(SpecialWeaponAbilities.InputTag,nullptr);
+        }
     };
 
     // 使用ParallelFor并行执行

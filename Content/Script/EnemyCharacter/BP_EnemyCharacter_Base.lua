@@ -50,7 +50,7 @@ function M:OnMontage()
     end
 
     self:PlayAnimMontage(MontagetoPlays)
-    UE.UKismetSystemLibrary.PrintString(self, "[OnMontage] Playing montage: " .. MontagetoPlays:GetName())
+    --UE.UKismetSystemLibrary.PrintString(self, "[OnMontage] Playing montage: " .. MontagetoPlays:GetName())
 end
 -- function M:OnReverseUpdate(value)
 --     -- 更新材质参数
