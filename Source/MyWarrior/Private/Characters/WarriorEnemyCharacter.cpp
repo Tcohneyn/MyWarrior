@@ -19,6 +19,8 @@
 #include "Materials/MaterialParameterCollection.h"
 #include "Widgets/WarriorWidgetBase.h"
 #include "WarriorDebugHelper.h"
+#include "AbilitySystem/WarriorAbilitySystemComponent.h"
+
 AWarriorEnemyCharacter::AWarriorEnemyCharacter()
 {
     AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
@@ -88,6 +90,7 @@ void AWarriorEnemyCharacter::InitEnemyStartUpData()
          }
   }));
 }
+
 
 void AWarriorEnemyCharacter::BeginPlay()
 {
@@ -186,12 +189,24 @@ void AWarriorEnemyCharacter::OnDissolveUpdate(float Value)
 
 void AWarriorEnemyCharacter::OnDissolveFinished()
 {
-    Destroy();
+    GetWorld()->GetTimerManager().ClearTimer(StoneSpawnTimerHandle);
     AWarriorWeaponBase* EnemyWeapon = EnemyCombatComponent->GetCharacterCurrentEquippedWeapon();
     if (EnemyWeapon)
     {
         EnemyWeapon->Destroy();
     }
+    WarriorAbilitySystemComponent->TryActivateAbilityByTag(SpawnStoneTag);
+    if (!StoneSpawnDelegate.IsBound())
+    {
+        StoneSpawnDelegate.Unbind();
+    }
+    StoneSpawnDelegate.BindUObject(this, &ThisClass::StoneDestroy);  // 绑定参数
+    GetWorld()->GetTimerManager().SetTimer(StoneSpawnTimerHandle, StoneSpawnDelegate, StoneSpawnDelayTime, false);
+}
+void AWarriorEnemyCharacter::StoneDestroy()
+{
+    //Debug::Print("StoneDestroy");
+    Destroy();
 }
 void AWarriorEnemyCharacter::BindReverseTimelineUpdate(UTimelineComponent* Timelines)
 {

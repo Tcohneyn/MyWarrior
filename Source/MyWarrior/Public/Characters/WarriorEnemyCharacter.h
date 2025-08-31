@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Characters/WarriorBaseCharacter.h"
 #include "Interfaces/Enemy_Death_Interface.h"
 #include "Components/TimelineComponent.h"
@@ -71,6 +72,9 @@ protected:
     UPROPERTY(VisibleAnywhere, Category = "UI")
     TObjectPtr<UWidgetComponent> EnemyHealthWidgetComponent;
 
+    UPROPERTY(EditDefaultsOnly, Category = "SpawnStone")
+    FGameplayTag SpawnStoneTag;
+
     UFUNCTION()
     virtual void OnBodyCollisionBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
         UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -116,7 +120,12 @@ protected:
 
 private:
     void InitEnemyStartUpData();
+    FTimerHandle StoneSpawnTimerHandle;
+    FTimerDelegate StoneSpawnDelegate;
+    void StoneDestroy();
 
+    UPROPERTY(EditDefaultsOnly,Category="Delay")
+    float StoneSpawnDelayTime = 0.5f;
 public:
     FORCEINLINE UEnemyCombatComponent* GetEnemyCombatComponent() const { return EnemyCombatComponent; }
     FORCEINLINE UBoxComponent* GetLeftHandCollisionBox() const { return LeftHandCollisionBox; }

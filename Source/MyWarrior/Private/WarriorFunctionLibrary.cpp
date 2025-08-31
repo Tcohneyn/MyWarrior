@@ -6,12 +6,10 @@
 #include "Interfaces/PawnCombatInterface.h"
 #include "GenericTeamAgentInterface.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Kismet/KismetSystemLibrary.h"
 #include "WarriorDebugHelper.h"
 #include "WarriorGameplayTags.h"
-#include "Engine/AssetManager.h"
-#include "Engine/StreamableManager.h"
 #include "WarriorTypes/WarriorCountDownAction.h"
+#include "EnhancedInputSubsystems.h"
 
 UWarriorAbilitySystemComponent* UWarriorFunctionLibrary::NativeGetWarriorASCFromActor(AActor* InActor)
 {
@@ -222,27 +220,16 @@ void UWarriorFunctionLibrary::CountDown(const UObject* WorldContextObject, float
     }
     
 }
-
-void UWarriorFunctionLibrary::AsyncLoadAsset(const UObject* WorldContextObject, TSoftObjectPtr<UObject> Asset, FLuaOnAssetLoaded OnLoaded)
+//获取增强输入本地玩家子系统
+UEnhancedInputLocalPlayerSubsystem* UWarriorFunctionLibrary::GetEnhancedInputLocalPlayerSubsystem(APlayerController* Controller)
 {
-    if (!Asset.IsValid() && Asset.ToSoftObjectPath().IsNull())
-    {
-        UE_LOG(LogTemp, Warning, TEXT("AsyncLoadAsset: Asset is invalid"));
-        return;
-    }
+    // 获取本地玩家
+    ULocalPlayer* LocalPlayer = Controller->GetLocalPlayer();
 
-    if (!OnLoaded.IsBound())
-    {
-        UE_LOG(LogTemp, Warning, TEXT("AsyncLoadAsset: OnLoaded delegate is not bound"));
-        return;
-    }
-
-    FStreamableManager& Streamable = UAssetManager::GetStreamableManager();
-    const FSoftObjectPath SoftPath = Asset.ToSoftObjectPath();
-
-    Streamable.RequestAsyncLoad(SoftPath, FStreamableDelegate::CreateLambda([SoftPath, OnLoaded]()
-    {
-        UObject* LoadedObject = SoftPath.ResolveObject();
-        OnLoaded.ExecuteIfBound(LoadedObject);
-    }));
+    // 获取增强输入本地玩家子系统
+    auto Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
+    
+    return Subsystem;
 }
+
+
