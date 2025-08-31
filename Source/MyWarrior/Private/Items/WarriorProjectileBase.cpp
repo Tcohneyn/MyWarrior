@@ -101,7 +101,7 @@ void AWarriorProjectileBase::OnProjectileBeginOverlap(UPrimitiveComponent* Overl
         Data.Instigator = GetInstigator();
         Data.Target = HitPawn;
     //判断敌我关系并应用伤害
-        if (UWarriorFunctionLibrary::IsTargetPawnHostile(GetInstigator(), HitPawn))
+        if (UWarriorFunctionLibrary::IsTargetPawnHostile(GetInstigator(), HitPawn) && ProjectileDamageEffectSpecHandle.IsValid())
         {
             HandleApplyProjectileDamage(HitPawn, Data);
         }
