@@ -15,6 +15,7 @@
 #include "Components/UI/HeroUIComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "WarriorDebugHelper.h"
+#include "GameModes/WarriorBaseGameMode.h"
 // 构造函数：AWarriorHeroCharacter的构造函数
 AWarriorHeroCharacter::AWarriorHeroCharacter()
 {
@@ -84,7 +85,32 @@ void AWarriorHeroCharacter::PossessedBy(AController* NewController)
     {
         if (UDataAsset_StartUpDataBase* LoadedData = CharacterStartUpData.LoadSynchronous())
         {
-            LoadedData->GiveToAbilitySystemComponent(WarriorAbilitySystemComponent);
+            int32 AbilityApplyLevel = 1;
+
+            if (AWarriorBaseGameMode* BaseGameMode = GetWorld()->GetAuthGameMode<AWarriorBaseGameMode>())
+            {
+                switch (BaseGameMode->GetCurrentGameDifficulty())
+                {
+                    case EWarriorGameDifficulty::Easy: AbilityApplyLevel = 4;
+                        Debug::Print(TEXT("Current Difficulty: Easy"));
+                        break;
+
+                    case EWarriorGameDifficulty::Normal: AbilityApplyLevel = 3;
+                        Debug::Print(TEXT("Current Difficulty: Normal"));
+                        break;
+
+                    case EWarriorGameDifficulty::Hard: AbilityApplyLevel = 2;
+                        Debug::Print(TEXT("Current Difficulty: Hard"));
+                        break;
+
+                    case EWarriorGameDifficulty::VeryHard: AbilityApplyLevel = 1;
+                        Debug::Print(TEXT("Current Difficulty: Very Hard"));
+                        break;
+
+                    default: break;
+                }
+            }
+            LoadedData->GiveToAbilitySystemComponent(WarriorAbilitySystemComponent,AbilityApplyLevel);
         }
     }
 }

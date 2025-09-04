@@ -29,12 +29,14 @@ function M:OnMontage()
     self:K2_EndAbility()
 end
 
-function M:SpawnFinished()
+function M:SpawnFinished(SpawnedEnemies)
    local Enemy = self:GetEnemyCharacterFromActorInfo()
    local EnemyBlackboard = UE.UAIBlueprintHelperLibrary.GetBlackboard(Enemy)
    local Key =UE.UKismetSystemLibrary.MakeLiteralName("HasSpawnedEnemies")
    EnemyBlackboard:SetValueAsBool(Key, true)
-
+   local GameMode= UE.UGameplayStatics.GetGameMode(self)
+   local SGameMode = GameMode:Cast(UE.AWarriorSurvialGameMode)
+   UE.AWarriorSurvialGameMode.RegisterSpawnedEnemies(SGameMode,SpawnedEnemies)
 end
 
 return M

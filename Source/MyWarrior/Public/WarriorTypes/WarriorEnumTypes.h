@@ -45,3 +45,12 @@ enum class EWarriorDecoratorOperaty : uint8
     IsGreaterThanOrEqualTo,
     IsGreaterThan
 };
+
+UENUM(BlueprintType)
+enum class EWarriorGameDifficulty : uint8
+{
+    Easy,
+    Normal,
+    Hard,
+    VeryHard
+};

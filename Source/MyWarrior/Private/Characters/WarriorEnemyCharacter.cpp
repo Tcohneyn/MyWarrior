@@ -20,6 +20,7 @@
 #include "Widgets/WarriorWidgetBase.h"
 #include "WarriorDebugHelper.h"
 #include "AbilitySystem/WarriorAbilitySystemComponent.h"
+#include "GameModes/WarriorBaseGameMode.h"
 
 AWarriorEnemyCharacter::AWarriorEnemyCharacter()
 {
@@ -80,12 +81,37 @@ void AWarriorEnemyCharacter::InitEnemyStartUpData()
     {
         return;
     }
+    int32 AbilityApplyLevel = 1;
+
+    if (AWarriorBaseGameMode* BaseGameMode = GetWorld()->GetAuthGameMode<AWarriorBaseGameMode>())
+    {
+        switch (BaseGameMode->GetCurrentGameDifficulty())
+        {
+            case EWarriorGameDifficulty::Easy: AbilityApplyLevel = 1;
+                Debug::Print(TEXT("Current Difficulty: Easy"));
+                break;
+
+            case EWarriorGameDifficulty::Normal: AbilityApplyLevel = 2;
+                Debug::Print(TEXT("Current Difficulty: Normal"));
+                break;
+
+            case EWarriorGameDifficulty::Hard: AbilityApplyLevel = 3;
+                Debug::Print(TEXT("Current Difficulty: Hard"));
+                break;
+
+            case EWarriorGameDifficulty::VeryHard: AbilityApplyLevel = 4;
+                Debug::Print(TEXT("Current Difficulty: Very Hard"));
+                break;
+
+            default: break;
+        }
+    }
     UAssetManager::GetStreamableManager().RequestAsyncLoad(
-        CharacterStartUpData.ToSoftObjectPath(), FStreamableDelegate::CreateLambda([this]()
+        CharacterStartUpData.ToSoftObjectPath(), FStreamableDelegate::CreateLambda([this,AbilityApplyLevel]()
  {
            if (UDataAsset_StartUpDataBase* LoadedData = CharacterStartUpData.Get())
          {
-            LoadedData->GiveToAbilitySystemComponent(WarriorAbilitySystemComponent);
+            LoadedData->GiveToAbilitySystemComponent(WarriorAbilitySystemComponent,AbilityApplyLevel);
                  // Debug::Print(TEXT("Enemy StartUpData Loaded"), FColor::Green);
          }
   }));

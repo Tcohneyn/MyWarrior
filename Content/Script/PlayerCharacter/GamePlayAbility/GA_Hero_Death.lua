@@ -28,6 +28,9 @@ function M:K2_OnEndAbility(bWasCancelled)
         characterCap:SetCollisionEnabled(UE.ECollisionEnabled.NoCollision)
     end
     local controller = self:GetHeroControllerFromActorInfo()
+    local GameMode = UE.UGameplayStatics.GetGameMode(self)
+    local SGameMode = GameMode:Cast(UE.AWarriorSurvialGameMode)
+    SGameMode:SetCurrentSurvialGameModeState(UE.EWarriorSurvialGameModeState.PlayDied)
     if controller and controller:IsValid() then
         UE.UWidgetBlueprintLibrary.SetInputMode_UIOnlyEx(controller)
         controller.bShowMouseCursor = true
