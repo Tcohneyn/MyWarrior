@@ -34,22 +34,27 @@ UHeroUIComponent* UWarriorHeroGameplayAbility::GetHeroUIComponentFromActorInfo()
 {
     return GetHeroCharacterFromActorInfo()->GetHeroUIComponent();
 }
-
+// 函数功能：创建英雄伤害效果的运行时规格（Spec）句柄
 FGameplayEffectSpecHandle UWarriorHeroGameplayAbility::MakeHeroDamageEffectSpecHandle(
     TSubclassOf<UGameplayEffect> EffectClass, float InWeaponBaseDamage, FGameplayTag InCurrentAttackTypeTag, int32 InUsedComboCount)
 {
+     // 1. 参数校验：确保传入的EffectClass有效（避免空指针）
     check(EffectClass);
+    // 2. 创建效果上下文（Context）：存储伤害来源、触发者等关键信息
     FGameplayEffectContextHandle ContextHandle = GetWarriorAbilitySystemComponentFromActorInfo()->MakeEffectContext();
-    ContextHandle.SetAbility(this);
-    ContextHandle.AddSourceObject(GetAvatarActorFromActorInfo());
-    ContextHandle.AddInstigator(GetAvatarActorFromActorInfo(), GetAvatarActorFromActorInfo());
-
+    ContextHandle.SetAbility(this);// 设置触发此效果的Ability实例[1](@ref)
+    ContextHandle.AddSourceObject(GetAvatarActorFromActorInfo());// 设置伤害来源对象（如武器持有者）[1,7](@ref)
+    ContextHandle.AddInstigator(GetAvatarActorFromActorInfo(), GetAvatarActorFromActorInfo());// 设置施加者（通常与来源相同）[1](@ref)
+    // 3. 生成效果规格（Spec）：GameplayEffect的运行时实例
     FGameplayEffectSpecHandle EffectSpecHandle =
         GetWarriorAbilitySystemComponentFromActorInfo()->MakeOutgoingSpec(EffectClass, GetAbilityLevel(), ContextHandle);
+    // 4. 动态配置伤害参数
+    // 4.1 设置基础伤害值（通过SetByCaller机制动态传递）
     EffectSpecHandle.Data->SetSetByCallerMagnitude(WarriorGameplayTags::Shared_SetByCaller_BaseDamage, InWeaponBaseDamage);
+    // 4.2 设置攻击类型相关参数（如连击伤害加成）
     if (InCurrentAttackTypeTag.IsValid())
     {
-        EffectSpecHandle.Data->SetSetByCallerMagnitude(InCurrentAttackTypeTag, InUsedComboCount);
+        EffectSpecHandle.Data->SetSetByCallerMagnitude(InCurrentAttackTypeTag, InUsedComboCount);// 连击数（可设计为连击越高伤害越高）
     }
     return EffectSpecHandle;
 }
